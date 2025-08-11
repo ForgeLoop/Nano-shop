@@ -1,19 +1,10 @@
-import { tokens } from '@/theme/tokens'
-import { componentThemes } from '@/theme/components'
+import { lightTokens, darkTokens } from './tokens';
+import { createTheme } from './createTheme';
 
-export const theme = {
-  token: {
-    colorPrimary: tokens.colors.primary,
-    colorSuccess: tokens.colors.success,
-    colorWarning: tokens.colors.warning,
-    colorError: tokens.colors.error,
-    colorInfo: tokens.colors.info,
-    colorBgBase: tokens.colors.background,
-    colorBgContainer: tokens.colors.container,
-    fontFamily: tokens.typography.fontFamily,
-  },
-  components: componentThemes
-}
+// Exporta explícitamente los temas creados para usarlos individualmente
+export const lightTheme = createTheme(lightTokens);
+export const darkTheme = createTheme(darkTokens);
 
-export { tokens }
-export * from './components'
+// También exporta tokens y componentes para quien los necesite
+export { lightTokens, darkTokens };
+export * from './components';
