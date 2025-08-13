@@ -12,10 +12,15 @@ export default defineConfig({
     react(),
     federation({
       name: 'shell',
-      filename: 'remoteEntry.js',
+      //filename: 'remoteEntry.js',
       remotes: {
         // Add your microfrontends here as you create them
         // Example: 'products': 'products@http://localhost:3001/remoteEntry.js'
+        fullapp: {
+          type: "module",
+          name: "fullapp",
+          entry: "http://localhost:3001/remoteEntry.js"
+        }
       },
       shared: {
         react: {
@@ -36,9 +41,4 @@ export default defineConfig({
   server: {
     port: 3000
   },
-  build: {
-    target: 'esnext',
-    minify: false,
-    cssCodeSplit: false
-  }
 })

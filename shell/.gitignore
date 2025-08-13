@@ -17,3 +17,5 @@ dist-ssr/
 
 # Shell-specific temporary files
 .temp/
+
+node_modules

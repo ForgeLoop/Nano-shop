@@ -5,6 +5,7 @@ import { Suspense } from 'react';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { lightTheme, darkTheme } from '@/theme';
 import '@/App.css';
+import RemoteFullAppLoader from './components/FullApp';
 
 const { Header, Content } = Layout;
 
@@ -15,12 +16,12 @@ function App() {
     <ConfigProvider theme={darkMode ? darkTheme : lightTheme}>
       <Router>
         <Layout style={{ minHeight: '100vh' }}>
-          <Header   
+          {/* <Header
             style={{
               display: 'flex',
               alignItems: 'center',
               backgroundColor: darkMode ? darkTheme.components.Layout.headerBg : lightTheme.components.Layout.headerBg,
-            }} 
+            }}
           >
             <div style={{ color: darkMode ? darkTheme.token.colorWhite : lightTheme.token.colorWhite, fontSize: 20, marginRight: 40 }}>
               ForgeLoop
@@ -36,8 +37,8 @@ function App() {
             <Menu
               theme={darkMode ? 'dark' : 'light'}
               mode="horizontal"
-              style={{ 
-                flex: 1, 
+              style={{
+                flex: 1,
                 minWidth: 0,
                 backgroundColor: darkMode ? darkTheme.components.Layout.headerBg : lightTheme.components.Layout.headerBg
               }}
@@ -48,19 +49,20 @@ function App() {
                 },
               ]}
             />
-          </Header>
+          </Header> */}
 
-          <Content style={{ padding: 20 }}>
+          <Content>
             <ErrorBoundary>
               <Suspense fallback={<div>Loading...</div>}>
                 <Routes>
                   <Route
                     path="/"
                     element={
-                      <div>
-                        <h1>Welcome to ForgeLoop</h1>
-                        <p>Shell application ready for microfrontends</p>
-                      </div>
+                      <ErrorBoundary>
+                        <Suspense fallback={<div>Loading...</div>}>
+                          <RemoteFullAppLoader />
+                        </Suspense>
+                      </ErrorBoundary>
                     }
                   />
                 </Routes>
