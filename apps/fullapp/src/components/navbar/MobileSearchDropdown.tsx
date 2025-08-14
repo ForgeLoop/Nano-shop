@@ -2,7 +2,6 @@ import React from 'react';
 import { Input, Button } from 'antd';
 import { mobileSearchDropdownStyles } from './navbar.styles';
 import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
-import { COLORS } from './navbar.constants';
 
 interface MobileSearchDropdownProps {
     visible: boolean;

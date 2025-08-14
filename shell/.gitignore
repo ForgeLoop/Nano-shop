@@ -18,4 +18,5 @@ dist-ssr/
 # Shell-specific temporary files
 .temp/
 
-node_modules
+# No subir node_modules
+node_modules/

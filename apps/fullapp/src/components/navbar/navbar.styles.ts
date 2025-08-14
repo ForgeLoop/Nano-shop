@@ -65,14 +65,20 @@ export const navbarStyles: Record<string, CSSProperties> = {
         cursor: 'pointer',
         height: '100%',
     },
+    // logoImage: {
+    //     objectFit: 'contain' as const,
+    //     borderRadius: '50%',
+    //     backgroundColor: 'white',
+    //     padding: '6px',
+    //     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    //     display: 'block',
+    //     margin: '0 auto',
+    // },
     logoImage: {
         objectFit: 'contain' as const,
-        borderRadius: '50%',
-        backgroundColor: 'white',
-        padding: '6px',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        //padding: '6px',
         display: 'block',
-        margin: '0 auto',
+        //margin: '0 auto',
     },
     // Mobile logo without white circle
     logoImageMobile: {
@@ -348,12 +354,10 @@ export const mobileDrawerStyles: Record<string, CSSProperties> = {
     // Puedes agregar estilos personalizados para el Drawer si lo necesitas
     // Ejemplo: backgroundColor: '#fff',
   },
-  drawerContent: {
-    padding: '20px 0',
-  },
+
   categoryItem: {
     display: 'block',
-    padding: '15px 20px',
+    padding: '10px 20px',
     color: '#333',
     textDecoration: 'none',
     borderBottom: '1px solid #f0f0f0',
@@ -377,4 +381,10 @@ export const mobileDrawerStyles: Record<string, CSSProperties> = {
     color: '#666',
     lineHeight: 1.3,
   },
+  isIphoneOpenContent:{
+    paddingLeft: '16px',
+  },
+  isIphoneOpenText:{
+    fontSize: '15px',
+  }
 };

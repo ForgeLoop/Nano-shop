@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
-import { NAVBAR_HEIGHT, COLORS, PRODUCT_CATEGORIES, navigateTo } from './navbar.constants';
+import { COLORS, PRODUCT_CATEGORIES, navigateTo } from './navbar.constants';
 import { createButtonStyles, desktopDropdownStyles } from './navbar.styles';
 
 interface DesktopDropdownProps {

@@ -23,7 +23,7 @@ export const carouselStyles: Record<string, CSSProperties> = {
   carouselImage: {
     width: '100%',
     height: '100%', // Volver a 100% para que ocupe todo el contenedor
-    objectFit: 'cover',
+    objectFit: "cover",
     objectPosition: 'center' as const,
     display: 'block',
   },
