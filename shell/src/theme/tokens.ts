@@ -6,7 +6,7 @@ export const lightTokens = {
     warning: '#faad14',
     error: '#ff4d4f',
     info: '#1890ff',
-    background: '#c8c8c8ff',
+    background: '#eeeeeeff',
     container: '#ffffff',
     white: '#ffffff',
   },
