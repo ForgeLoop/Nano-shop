@@ -33,13 +33,13 @@ export const productCategories: ProductCategory[] = [
   {
     id: 5,
     name: "MacBook",
-    image: "/grid/macbook.jpeg",
+    image: "/grid/macbook.webp",
     description: "Computadoras portátiles de Apple",
   },
   {
     id: 6,
     name: "Accesorios",
-    image: "/grid/accesorios.jpeg",
+    image: "/grid/accesorios.jpg",
     description: "Todos los accesorios para tus dipositivos.",
   },
   {

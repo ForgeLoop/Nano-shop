@@ -18,6 +18,8 @@ const ProductCategoriesGrid: React.FC = () => {
                             md={8} // 3 columnas en tablet
                             lg={6} // 4 columnas en desktop
                             xl={6} // 4 columnas en desktop grande
+                            // lg={4} // 4 columnas en desktop
+                            // xl={4} // 4 columnas en desktop grande
                         >
                             <Card
                                 hoverable

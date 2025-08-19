@@ -10,19 +10,25 @@ export const gridStyles = {
     margin: "0 auto",
   }),
   cardCover: (isMobile: boolean): CSSProperties => ({
-    height: isMobile ? "150px" : "250px",
+    height: isMobile ? "150px" : "200px",
     overflow: "hidden",
     position: "relative",
+    backgroundColor: "#ffffff",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   }),
   cardImage: {
     width: "100%",
     height: "100%",
-    objectFit: "cover",
+    display: "block",
+    objectFit: "contain",
+    objectPosition: "center",
     transition: "transform 0.3s ease",
   } as CSSProperties,
   card: {
     height: "100%",
-    borderRadius: "12px",
+    borderRadius: "5px",
     overflow: "hidden",
   } as CSSProperties,
   cardBody: (isMobile: boolean): CSSProperties => ({
