@@ -8,9 +8,6 @@ import {
     EnvironmentOutlined,
     ClockCircleOutlined,
     MailOutlined,
-    InstagramOutlined,
-    GlobalOutlined,
-    StarOutlined,
 } from "@ant-design/icons"
 import { useIsMobile } from "../../hooks/useWindowSize"
 
@@ -198,7 +195,7 @@ const Footer: React.FC = () => {
                                 <Link href="#" style={{ color: "#d1d5db", fontSize: isMobile ? "12px" : "14px" }}>
                                     Contacto
                                 </Link>
-                                <Link href="#" style={{ color: "#d1d5db", fontSize: isMobile ? "12px" : "14px" }}>
+                                <Link href="/nosotros" style={{ color: "#d1d5db", fontSize: isMobile ? "12px" : "14px" }}>
                                     Acerca de
                                 </Link>
                             </Space>
