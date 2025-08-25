@@ -1,8 +1,9 @@
 import React from 'react';
-import { 
-  Layout, 
-  Input, 
-  Button, 
+import {
+  Layout,
+  Input,
+  Button,
+  Typography
 } from 'antd';
 import {
   SearchOutlined,
@@ -15,7 +16,7 @@ import {
   COLORS,
   navigateTo,
   openExternalLink,
-} from './navbar.constants' ;
+} from './navbar.constants';
 import type { NavbarProps } from './navbar.constants';
 import { createSearchStyles, createButtonStyles, navbarStyles, searchSuffixButton } from './navbar.styles';
 import { useIsMobile } from '../../hooks/useWindowSize';
@@ -26,6 +27,7 @@ import { FloatingWhatsApp } from './FloatingWhatsApp';
 import { WhatsAppLogo } from '../../assets/icons/WhatsAppLogo';
 
 const { Header } = Layout;
+const { Link } = Typography;
 
 // ==================== COMPONENT ====================
 
@@ -75,7 +77,7 @@ const Navbar: React.FC<NavbarProps> = () => {
     <>
       <Header style={isMobile ? navbarStyles.navbarMobile : navbarStyles.navbar}>
         <div style={isMobile ? navbarStyles.containerMobile : navbarStyles.container}>
-          
+
           {/* ==================== MOBILE VERSION ==================== */}
           {isMobile ? (
             <>
@@ -98,8 +100,8 @@ const Navbar: React.FC<NavbarProps> = () => {
 
               {/* Center - Logo */}
               <div style={navbarStyles.mobileCenterLogo}>
-                <a 
-                  href="/" 
+                <a
+                  href="/"
                   style={navbarStyles.logoLink}
                   onClick={(e) => {
                     e.preventDefault();
@@ -109,7 +111,7 @@ const Navbar: React.FC<NavbarProps> = () => {
                   <img
                     src="/logonanoblanco.png"
                     alt="Nanoshop Logo"
-                    
+
                     style={navbarStyles.logoImageMobile}
                   />
                 </a>
@@ -136,8 +138,8 @@ const Navbar: React.FC<NavbarProps> = () => {
             <>
               {/* ==================== LOGO ==================== */}
               <div style={navbarStyles.logo}>
-                <a 
-                  href="/" 
+                <a
+                  href="/"
                   style={navbarStyles.logoLink}
                   onMouseEnter={(e) => handleMouseEnter(e.currentTarget, { transform: 'scale(1.05)' })}
                   onMouseLeave={(e) => handleMouseLeave(e.currentTarget, { transform: 'scale(1)' })}
@@ -158,7 +160,7 @@ const Navbar: React.FC<NavbarProps> = () => {
 
               {/* ==================== CENTER CONTENT ==================== */}
               <div style={navbarStyles.centerContent}>
-                
+
                 {/* Search Bar */}
                 <div style={navbarStyles.searchContainer}>
                   <Input
@@ -184,95 +186,99 @@ const Navbar: React.FC<NavbarProps> = () => {
                     onBlur={() => setSearchFocused(false)}
                   />
                 </div>
-                
+
                 {/* Navigation Buttons */}
                 <div style={navbarStyles.navigationButtons}>
                   <DesktopDropdown
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                   />
-                  <Button 
-                    type="text"
-                    style={createButtonStyles()}
-                    onMouseEnter={(e) => handleMouseEnter(e.currentTarget, { 
-                      color: COLORS.white, 
-                      backgroundColor: COLORS.overlay.light 
-                    })}
-                    onMouseLeave={(e) => handleMouseLeave(e.currentTarget, { 
-                      color: COLORS.overlay.dark, 
-                      backgroundColor: COLORS.transparent 
-                    })}
-                    onClick={() => navigateTo('/about')}
-                  >
-                    Acerca de
-                  </Button>
-                  <Button 
-                    type="text"
-                    style={createButtonStyles()}
-                    onMouseEnter={(e) => handleMouseEnter(e.currentTarget, { 
-                      color: COLORS.white, 
-                      backgroundColor: COLORS.overlay.light 
-                    })}
-                    onMouseLeave={(e) => handleMouseLeave(e.currentTarget, { 
-                      color: COLORS.overlay.dark, 
-                      backgroundColor: COLORS.transparent 
-                    })}
-                    onClick={() => navigateTo('/contact')}
-                  >
-                    Contacto
-                  </Button>
+                  <Link href='/nosotros'>
+                    <Button
+                      type="text"
+                      style={createButtonStyles()}
+                      onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
+                        color: COLORS.white,
+                        backgroundColor: COLORS.overlay.light
+                      })}
+                      onMouseLeave={(e) => handleMouseLeave(e.currentTarget, {
+                        color: COLORS.overlay.dark,
+                        backgroundColor: COLORS.transparent
+                      })}
+                      onClick={() => navigateTo('/about')}
+                    >
+                      Acerca de
+                    </Button>
+                  </Link>
+                  <Link href='/contacto'>
+                    <Button
+                      type="text"
+                      style={createButtonStyles()}
+                      onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
+                        color: COLORS.white,
+                        backgroundColor: COLORS.overlay.light
+                      })}
+                      onMouseLeave={(e) => handleMouseLeave(e.currentTarget, {
+                        color: COLORS.overlay.dark,
+                        backgroundColor: COLORS.transparent
+                      })}
+                      onClick={() => navigateTo('/contact')}
+                    >
+                      Contacto
+                    </Button>
+                  </Link>
                 </div>
               </div>
 
               {/* ==================== RIGHT ICONS ==================== */}
               <div style={navbarStyles.rightIcons}>
-                
+
                 {/* Cart */}
                 <Button
                   type="text"
                   icon={<ShoppingCartOutlined />}
                   style={navbarStyles.iconButton}
                   onClick={() => navigateTo('/cart')}
-                  onMouseEnter={(e) => handleMouseEnter(e.currentTarget, { 
+                  onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
                     backgroundColor: COLORS.overlay.medium,
-                    transform: 'scale(1.1)' 
+                    transform: 'scale(1.1)'
                   })}
-                  onMouseLeave={(e) => handleMouseLeave(e.currentTarget, { 
+                  onMouseLeave={(e) => handleMouseLeave(e.currentTarget, {
                     backgroundColor: COLORS.overlay.light,
-                    transform: 'scale(1)' 
+                    transform: 'scale(1)'
                   })}
                 />
-                
+
                 {/* User */}
                 <Button
                   type="text"
                   icon={<UserOutlined />}
                   style={navbarStyles.iconButton}
                   onClick={() => navigateTo('/profile')}
-                  onMouseEnter={(e) => handleMouseEnter(e.currentTarget, { 
+                  onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
                     backgroundColor: COLORS.overlay.medium,
-                    transform: 'scale(1.1)' 
+                    transform: 'scale(1.1)'
                   })}
-                  onMouseLeave={(e) => handleMouseLeave(e.currentTarget, { 
+                  onMouseLeave={(e) => handleMouseLeave(e.currentTarget, {
                     backgroundColor: COLORS.overlay.light,
-                    transform: 'scale(1)' 
+                    transform: 'scale(1)'
                   })}
                 />
-                
+
                 {/* WhatsApp */}
                 <Button
                   type="text"
                   style={navbarStyles.whatsappButton}
                   onClick={() => openExternalLink('https://wa.me/1234567890')}
-                  onMouseEnter={(e) => handleMouseEnter(e.currentTarget, { 
+                  onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
                     backgroundColor: COLORS.whatsapp,
                     color: COLORS.white,
-                    transform: 'scale(1.1)' 
+                    transform: 'scale(1.1)'
                   })}
-                  onMouseLeave={(e) => handleMouseLeave(e.currentTarget, { 
+                  onMouseLeave={(e) => handleMouseLeave(e.currentTarget, {
                     backgroundColor: COLORS.white,
                     color: COLORS.whatsapp,
-                    transform: 'scale(1)' 
+                    transform: 'scale(1)'
                   })}
                 >
                   <WhatsAppLogo width={20} height={20} />
@@ -280,21 +286,21 @@ const Navbar: React.FC<NavbarProps> = () => {
               </div>
             </>
           )}
-          
+
         </div>
       </Header>
 
       {/* ==================== MOBILE SEARCH DROPDOWN ==================== */}
-      <MobileSearchDropdown 
-        visible={mobileSearchVisible} 
-        onClose={closeMobileSearch} 
+      <MobileSearchDropdown
+        visible={mobileSearchVisible}
+        onClose={closeMobileSearch}
         searchButtonRef={searchButtonRef}
       />
 
       {/* ==================== MOBILE DRAWER ==================== */}
-      <MobileDrawer 
-        visible={drawerVisible} 
-        onClose={closeDrawer} 
+      <MobileDrawer
+        visible={drawerVisible}
+        onClose={closeDrawer}
       />
 
       {/* ==================== FLOATING WHATSAPP (MOBILE ONLY) ==================== */}

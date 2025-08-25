@@ -4,6 +4,7 @@ import Carousel from "./components/carousel/Carousel";
 import ProductCategoriesGrid from "./components/grid/Grid";
 import Footer from "./components/footer/Footer";
 import Nosotros from "./pages/Nosotros";
+import Contacto from "./pages/Contacto";
 
 // ...otros imports
 
@@ -18,6 +19,7 @@ const FullApp: React.FC = () => (
         </>
       } />
       <Route path="/nosotros" element={<Nosotros />} />
+      <Route path="/contacto" element={<Contacto />} />
       {/* ...más rutas */}
     </Routes>
     <Footer />

@@ -10,6 +10,8 @@ import {
     MailOutlined,
 } from "@ant-design/icons"
 import { useIsMobile } from "../../hooks/useWindowSize"
+import { footerStyles } from "./footer.styles"
+import { Image } from "antd"
 
 const { Title, Text, Link } = Typography
 
@@ -25,77 +27,59 @@ const Footer: React.FC = () => {
     }, [isMobile]);
 
     return (
-        <footer style={{ backgroundColor: "#333", color: "white" }}>
-            <div style={{ maxWidth: isMobile ? "100%" : "55%", margin: "0 auto", padding: isMobile ? "24px 4px 12px" : "32px 0px 24px" }}>
-                <Row gutter={isMobile ? [4, 4] : [24, 24]} style={{ marginBottom: "28px" }}>
+        <footer style={footerStyles.wrapper}>
+            <div style={footerStyles.container(isMobile)}>
+                <Row gutter={isMobile ? [4, 4] : [24, 24]} >
                     <Col xs={8} md={8}>
                         <Card
-                            style={{
-                                borderRadius: "5px",
-                                backgroundColor: "#444",
-                                borderColor: "#555",
-                                textAlign: "center",
-                                height: "100%",
-                            }}
+                            style={footerStyles.card}
                             styles={{
                                 body: {
-                                    padding: isMobile ? 2 : undefined, // Ajusta según tu diseño
+                                    padding: footerStyles.cardBody(isMobile).padding,
                                 },
                             }}
                         >
-                            <TruckOutlined style={{ fontSize: "32px", color: "#60a5fa", marginBottom: "16px" }} />
-                            <Title level={4} style={{ color: "white", marginBottom: "8px", fontSize: isMobile ? "14px" : "22px" }}>
+                            <TruckOutlined style={footerStyles.icon} />
+                            <Title level={4} style={footerStyles.cardTitle(isMobile)}>
                                 Realizamos Envíos
                             </Title>
-                            <Text style={{ color: "#d1d5db", fontSize: isMobile ? "12px" : "14px" }}>
+                            <Text style={footerStyles.description(isMobile)}>
                                 Envíos a todo el país con seguimiento en tiempo real
                             </Text>
                         </Card>
                     </Col>
                     <Col xs={8} md={8}>
                         <Card
-                            style={{
-                                borderRadius: "5px",
-                                backgroundColor: "#444",
-                                borderColor: "#555",
-                                textAlign: "center",
-                                height: "100%",
-                            }}
+                            style={footerStyles.card}
                             styles={{
                                 body: {
-                                    padding: isMobile ? 2 : undefined, // Ajusta según tu diseño
+                                    padding: footerStyles.cardBody(isMobile).padding,
                                 },
                             }}
                         >
-                            <CreditCardOutlined style={{ fontSize: "32px", color: "#60a5fa", marginBottom: "16px" }} />
-                            <Title level={4} style={{ color: "white", marginBottom: "8px", fontSize: isMobile ? "14px" : "22px" }}>
+                            <CreditCardOutlined style={footerStyles.icon} />
+                            <Title level={4} style={footerStyles.cardTitle(isMobile)}>
                                 Métodos de Pago
                             </Title>
-                            <Text style={{ color: "#d1d5db", fontSize: isMobile ? "12px" : "14px" }}>
+                            <Text style={footerStyles.description(isMobile)}>
                                 Tarjetas, transferencias y financiación disponible
                             </Text>
                         </Card>
                     </Col>
                     <Col xs={8} md={8}>
                         <Card
-                            style={{
-                                borderRadius: "5px",
-                                backgroundColor: "#444",
-                                borderColor: "#555",
-                                textAlign: "center",
-                                height: "100%",
-                            }}
+                            style={footerStyles.card}
                             styles={{
                                 body: {
-                                    padding: isMobile ? 3 : undefined, // Ajusta según tu diseño
+                                    padding: footerStyles.cardBody(isMobile).padding,
                                 },
                             }}
                         >
-                            <CustomerServiceOutlined style={{ fontSize: "32px", color: "#60a5fa", marginBottom: "16px" }} />
-                            <Title level={4} style={{ color: "white", marginBottom: "8px", fontSize: isMobile ? "14px" : "22px" }}>
+                            <CustomerServiceOutlined style={footerStyles.icon} />
+                            <Title level={4} style={footerStyles.cardTitle(isMobile)}>
                                 Soporte
                             </Title>
-                            <Text style={{ color: "#d1d5db", fontSize: isMobile ? "12px" : "14px" }}>
+                            <Text style={footerStyles.description(isMobile)}>
                                 Atención personalizada y garantía en todos nuestros productos
                             </Text>
                         </Card>
@@ -104,38 +88,29 @@ const Footer: React.FC = () => {
             </div>
 
             {/* Main Footer Content */}
-            <div style={{ maxWidth: isMobile ? "100%" : "55%", margin: "0 auto", padding: "12px 16px 36px" }}>
+            <div style={footerStyles.container(isMobile)}>
                 <Row gutter={[32, 32]}>
                     <Col xs={12} md={6} lg={6}>
-                        <Space direction="vertical" size="middle" style={{ width: "100%", padding: "10px" }}  >
+                        <Space direction="vertical" size="middle" style={footerStyles.mainContentSpace}  >
                             <div
                                 ref={logoDivRef}
-                                style={{
-                                    flex: 1,
-                                    display: 'flex',
-                                    height: '100%',
-                                    marginBottom: '16px',
-                                }}>
+                                style={footerStyles.logoDiv}>
                                 <Link href="/" style={{ textDecoration: 'none' }}>
-                                    <img
+                                    <Image
                                         src="/logonanoblanco2.png"
                                         alt="Nanoshop Logo2"
-                                        style={{
-                                            objectFit: 'contain' as const,
-                                            display: 'block',
-                                            height: 'auto',
-                                            width: '120px',
-                                        }}
+                                        style={footerStyles.logoImg}
+                                        preview={false}
                                     />
                                 </Link>
                             </div>
-                            <Text style={{ color: "#d1d5db", fontSize: isMobile ? "12px" : "14px", lineHeight: "1.6" }}>
+                            <Text style={footerStyles.description(isMobile)}>
                                 Tu tienda de confianza para tecnología de última generación. Productos originales con garantía y el
                                 mejor servicio.
                             </Text>
 
                             <Space direction="vertical" size="small">
-                                <Space align="start" style={{ color: "#d1d5db", fontSize: isMobile ? "12px" : "14px" }}>
+                                <Space align="start" style={footerStyles.description(isMobile)}>
                                     <EnvironmentOutlined style={{ color: "#60a5fa" }} />
                                     <div>
                                         <div>Roque Saenz Peña 157</div>
@@ -143,7 +118,7 @@ const Footer: React.FC = () => {
                                     </div>
                                 </Space>
 
-                                <Space align="start" style={{ color: "#d1d5db", fontSize: isMobile ? "12px" : "14px" }}>
+                                <Space align="start" style={footerStyles.description(isMobile)}>
                                     <ClockCircleOutlined style={{ color: "#60a5fa" }} />
                                     <div>
                                         <div>Lunes a Sabado de:</div>
@@ -151,7 +126,7 @@ const Footer: React.FC = () => {
                                     </div>
                                 </Space>
 
-                                <Space style={{ color: "#d1d5db", fontSize: isMobile ? "12px" : "14px" }}>
+                                <Space style={footerStyles.description(isMobile)}>
                                     <MailOutlined style={{ color: "#60a5fa" }} />
                                     <span>nanoshop.it@gmail.com</span>
                                 </Space>
@@ -160,8 +135,8 @@ const Footer: React.FC = () => {
                     </Col>
 
                     <Col xs={12} md={6} lg={6}>
-                        <Space direction="vertical" size="middle" style={{ width: "100%", padding: "10px", }}>
-                            <Title level={4} style={{ color: "white", marginBottom: "16px", minHeight: logoDivHeight || undefined, display: "flex", alignItems: "flex-end" }}>
+                        <Space direction="vertical" size="middle" style={footerStyles.mainContentSpace}>
+                            <Title level={4} style={footerStyles.sectionTitle(isMobile, logoDivHeight || undefined)}>
                                 Categorías
                             </Title>
                             <Space direction="vertical" size="small">
@@ -170,7 +145,7 @@ const Footer: React.FC = () => {
                                         <Link
                                             key={category}
                                             href="#"
-                                            style={{ color: "#d1d5db", fontSize: isMobile ? "12px" : "14px" }}
+                                            style={footerStyles.link(isMobile)}
                                             className="hover:text-blue-400"
                                         >
                                             {category}
@@ -182,20 +157,18 @@ const Footer: React.FC = () => {
                     </Col>
 
                     <Col xs={12} md={6} lg={6}>
-                        <Space direction="vertical" size="middle" style={{ width: "100%", padding: "10px" }}>
-                            <Title level={4} style={{
-                                color: "white", marginBottom: "16px", minHeight: logoDivHeight || undefined, display: "flex", alignItems: "flex-end"
-                            }}>
+                        <Space direction="vertical" size="middle" style={footerStyles.mainContentSpace}>
+                            <Title level={4} style={footerStyles.sectionTitle(isMobile, logoDivHeight || undefined)}>
                                 Información
                             </Title>
                             <Space direction="vertical" size="small">
-                                <Link href="#" style={{ color: "#d1d5db", fontSize: isMobile ? "12px" : "14px" }}>
+                                <Link href="#" style={footerStyles.link(isMobile)}>
                                     Home
                                 </Link>
-                                <Link href="#" style={{ color: "#d1d5db", fontSize: isMobile ? "12px" : "14px" }}>
+                                <Link href="#" style={footerStyles.link(isMobile)}>
                                     Contacto
                                 </Link>
-                                <Link href="/nosotros" style={{ color: "#d1d5db", fontSize: isMobile ? "12px" : "14px" }}>
+                                <Link href="/nosotros" style={footerStyles.link(isMobile)}>
                                     Acerca de
                                 </Link>
                             </Space>
@@ -203,8 +176,8 @@ const Footer: React.FC = () => {
                     </Col>
 
                     <Col xs={12} md={6} lg={6}>
-                        <Space direction="vertical" size="middle" style={{ width: "100%", padding: "10px" }}>
-                            <Title level={4} style={{ color: "white", marginBottom: "16px", minHeight: logoDivHeight || undefined, display: "flex", alignItems: "flex-end" }}>
+                        <Space direction="vertical" size="middle" style={footerStyles.mainContentSpace}>
+                            <Title level={4} style={footerStyles.sectionTitle(isMobile, logoDivHeight || undefined)}>
                                 Seguinos en:
                             </Title>
                             <Space direction="vertical" size="middle">
@@ -215,10 +188,11 @@ const Footer: React.FC = () => {
                                         rel="noopener noreferrer"
                                         style={{ display: "inline-block" }}
                                     >
-                                        <img
+                                        <Image
                                             src="/instagram.png" // Cambia por la ruta real de tu icono en public
                                             alt="instagram"
-                                            style={{ width: "auto", height: "30px", marginRight: 8, verticalAlign: "middle" }}
+                                            style={{...footerStyles.mediaIcons, height: "30px" }}
+                                            preview={false}
                                         />
                                     </Link>
                                     <Link
@@ -227,10 +201,11 @@ const Footer: React.FC = () => {
                                         rel="noopener noreferrer"
                                         style={{ display: "inline-block" }}
                                     >
-                                        <img
+                                        <Image
                                             src="/google.png" // Cambia por la ruta real de tu icono en public
                                             alt="google"
-                                            style={{ width: "auto", height: "30px", marginRight: 8, verticalAlign: "middle" }}
+                                            style={{ ...footerStyles.mediaIcons, height: "30px" }}
+                                            preview={false}
                                         />
                                     </Link>
                                 </Space>
@@ -242,10 +217,11 @@ const Footer: React.FC = () => {
                                     className="hover:text-yellow-400"
                                 >
                                     <Space>
-                                        <img
+                                        <Image
                                             src="/google-reviews.png" // Cambia por la ruta real de tu icono en public
                                             alt="Google Reviews"
-                                            style={{ width: "auto", height: "48px", marginRight: 8, verticalAlign: "middle" }}
+                                            style={{ ...footerStyles.mediaIcons, height: "48px" }}
+                                            preview={false}
                                         />
                                     </Space>
                                 </Link>
@@ -255,13 +231,13 @@ const Footer: React.FC = () => {
                 </Row>
             </div>
             {/* Copyright */}
-            <div style={{ backgroundColor: "#222", borderTop: "1px solid #555" }}>
-                <div style={{ maxWidth: isMobile ? "100%" : "55%", margin: "0 auto", padding: "16px", textAlign: "center" }}>
-                    <Text style={{ fontSize: "14px", color: "#9ca3af" }}>
+            
+                <div style={footerStyles.copyright}>
+                    <Text style={footerStyles.copyrightText}>
                         &copy; 2025 ForgeLoop. Todos los derechos reservados.
                     </Text>
                 </div>
-            </div>
+           
         </footer >
     )
 }

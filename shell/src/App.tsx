@@ -56,7 +56,7 @@ function App() {
               <Suspense fallback={<div>Loading...</div>}>
                 <Routes>
                   <Route
-                    path="/"
+                    path="/*"
                     element={
                       <ErrorBoundary>
                         <Suspense fallback={<div>Loading...</div>}>
