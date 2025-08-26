@@ -1,20 +1,19 @@
-import { wrap } from 'module';
 import { CSSProperties } from 'react';
 
 export const nosotrosStyles = {
     wrapper: (isMobile: boolean): CSSProperties => ({
         minHeight: "100vh",
-        background: isMobile ? `linear-gradient(to bottom, #333 0%, #333 21%, #eeeeeeff 21%, #eeeeeeff 100%)` : `linear-gradient(to bottom, #333 0%, #333 35%, #eeeeeeff 35%, #eeeeeeff 100%)`,
+        background: isMobile ? `linear-gradient(to bottom, #333 0%, #333 29%, #eeeeeeff 29%, #eeeeeeff 100%)` : `linear-gradient(to bottom, #333 0%, #333 40%, #eeeeeeff 40%, #eeeeeeff 100%)`,
         display: "flex",
         justifyContent: "center",
         padding: "0px 24px 50px",
     }),
     contactoWraper: (isMobile: boolean): CSSProperties => ({
         minHeight: "100%",
-        background: isMobile ? `linear-gradient(to bottom, #333 0%, #333 55%, #eeeeeeff 55%, #eeeeeeff 100%)` : `linear-gradient(to bottom, #333 0%, #333 55%, #eeeeeeff 55%, #eeeeeeff 100%)`,
+        background: isMobile ? `linear-gradient(to bottom, #333 0%, #333 62%, #eeeeeeff 62%, #eeeeeeff 100%)` : `linear-gradient(to bottom, #333 0%, #333 68%, #eeeeeeff 68%, #eeeeeeff 100%)`,
         display: "flex",
         justifyContent: "center",
-        padding: "32px 24px 120px",
+        padding: "0px 24px 120px",
     }),
     contactoDescription: (isMobile: boolean): CSSProperties => ({
         fontSize: isMobile ? "14px" : "18px",

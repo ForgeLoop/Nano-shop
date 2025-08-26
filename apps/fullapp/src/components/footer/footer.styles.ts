@@ -74,13 +74,33 @@ export const footerStyles = {
         width: "100%",
         padding: "10px",
     } as CSSProperties,
-    mediaIcons: { 
-        width: "auto", 
-        marginRight: 8, 
+    mediaIcons: {
+        width: "auto",
+        marginRight: 8,
         verticalAlign: "middle"
     },
-    copyrightText: { 
+    copyrightText: {
         fontSize: "14px",
         color: "#9ca3af"
-    } as CSSProperties
+    } as CSSProperties,
+    modalTitle: (isMobile: boolean): CSSProperties => ({
+        color: "white",
+        fontSize: isMobile ? "14px" : "22px",
+        marginBottom: "12px",
+    }),
+    modalContent: {
+        backgroundColor: "#444",
+        borderColor: "#555",
+        borderWidth: "2px",
+        borderStyle: "solid",
+        boxShadow: "none",
+        color: "#fff",
+        textAlign: "center",
+        height: "100%",
+        borderRadius: "5px"
+    } as CSSProperties,
+    modalContainer: (isMobile: boolean): CSSProperties => ({
+        width: isMobile ? 200 : 280,
+        margin: "0 auto"
+    })
 };

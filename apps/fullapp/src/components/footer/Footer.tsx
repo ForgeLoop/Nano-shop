@@ -1,6 +1,6 @@
 import type React from "react"
 import { useLayoutEffect, useRef, useState } from "react"
-import { Card, Typography, Row, Col, Space } from "antd"
+import { Card, Typography, Row, Col, Space, Modal } from "antd"
 import {
     TruckOutlined,
     CreditCardOutlined,
@@ -8,6 +8,7 @@ import {
     EnvironmentOutlined,
     ClockCircleOutlined,
     MailOutlined,
+    CloseOutlined,
 } from "@ant-design/icons"
 import { useIsMobile } from "../../hooks/useWindowSize"
 import { footerStyles } from "./footer.styles"
@@ -19,12 +20,42 @@ const Footer: React.FC = () => {
     const isMobile = useIsMobile(768);
     const logoDivRef = useRef<HTMLDivElement>(null);
     const [logoDivHeight, setLogoDivHeight] = useState<number>(0);
+    const [openModal, setOpenModal] = useState<null | "envios" | "pago" | "soporte">(null);
 
     useLayoutEffect(() => {
         if (logoDivRef.current) {
             setLogoDivHeight(logoDivRef.current.offsetHeight);
         }
     }, [isMobile]);
+
+    const modalContent = {
+        envios: (
+            <>
+                <Title level={4} style={footerStyles.modalTitle(isMobile)}>Envíos</Title>
+                <Text style={footerStyles.description(isMobile)}>Envíos a todo el país con seguimiento en tiempo real.<br />Consultá por envíos express en tu zona.</Text>
+            </>
+        ),
+        pago: (
+            <>
+                <Title level={4} style={footerStyles.modalTitle(isMobile)}>Métodos de Pago</Title>
+                <Text style={footerStyles.description(isMobile)}>
+                    • Efectivo.<br />
+                    • Transferencia.<br />
+                    • Dólares.<br />
+                    • Cripto.
+                </Text>
+            </>
+        ),
+        soporte: (
+            <>
+                <Title level={4} style={footerStyles.modalTitle(isMobile)}>Soporte</Title>
+                <Text style={footerStyles.description(isMobile)}>
+                    Atención personalizada y garantía en todos nuestros productos.<br />
+                    Contactanos por WhatsApp o email para cualquier consulta.
+                </Text>
+            </>
+        ),
+    };
 
     return (
         <footer style={footerStyles.wrapper}>
@@ -38,6 +69,8 @@ const Footer: React.FC = () => {
                                     padding: footerStyles.cardBody(isMobile).padding,
                                 },
                             }}
+                            hoverable
+                            onClick={() => setOpenModal("envios")}
                         >
                             <TruckOutlined style={footerStyles.icon} />
                             <Title level={4} style={footerStyles.cardTitle(isMobile)}>
@@ -56,6 +89,8 @@ const Footer: React.FC = () => {
                                     padding: footerStyles.cardBody(isMobile).padding,
                                 },
                             }}
+                            hoverable
+                            onClick={() => setOpenModal("pago")}
                         >
                             <CreditCardOutlined style={footerStyles.icon} />
                             <Title level={4} style={footerStyles.cardTitle(isMobile)}>
@@ -74,6 +109,8 @@ const Footer: React.FC = () => {
                                     padding: footerStyles.cardBody(isMobile).padding,
                                 },
                             }}
+                            hoverable
+                            onClick={() => setOpenModal("soporte")}
                         >
                             <CustomerServiceOutlined style={footerStyles.icon} />
                             <Title level={4} style={footerStyles.cardTitle(isMobile)}>
@@ -162,10 +199,10 @@ const Footer: React.FC = () => {
                                 Información
                             </Title>
                             <Space direction="vertical" size="small">
-                                <Link href="#" style={footerStyles.link(isMobile)}>
+                                <Link href="/" style={footerStyles.link(isMobile)}>
                                     Home
                                 </Link>
-                                <Link href="#" style={footerStyles.link(isMobile)}>
+                                <Link href="/contacto" style={footerStyles.link(isMobile)}>
                                     Contacto
                                 </Link>
                                 <Link href="/nosotros" style={footerStyles.link(isMobile)}>
@@ -191,12 +228,12 @@ const Footer: React.FC = () => {
                                         <Image
                                             src="/instagram.png" // Cambia por la ruta real de tu icono en public
                                             alt="instagram"
-                                            style={{...footerStyles.mediaIcons, height: "30px" }}
+                                            style={{ ...footerStyles.mediaIcons, height: "30px" }}
                                             preview={false}
                                         />
                                     </Link>
                                     <Link
-                                        href="https://instagram.com/nanoshop_it"
+                                        href="https://www.google.com/search?q=nano+shop&oq=nano+shop&gs_lcrp=EgZjaHJvbWUqCggAEAAY4wIYgAQyCggAEAAY4wIYgAQyEAgBEC4YrwEYxwEYgAQYjgUyBwgCEAAYgAQyCggDEAAYChgWGB4yCAgEEAAYFhgeMgYIBRBFGDwyBggGEEUYPDIGCAcQRRg80gEINDU3OWowajeoAgCwAgA&sourceid=chrome&ie=UTF-8#lrd="
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         style={{ display: "inline-block" }}
@@ -211,7 +248,7 @@ const Footer: React.FC = () => {
                                 </Space>
 
                                 <Link
-                                    href="https://www.google.com/search?q=nanoshop+reviews"
+                                    href="https://www.google.com/search?q=nano+shop&oq=nano+shop&gs_lcrp=EgZjaHJvbWUqCggAEAAY4wIYgAQyCggAEAAY4wIYgAQyEAgBEC4YrwEYxwEYgAQYjgUyBwgCEAAYgAQyCggDEAAYChgWGB4yCAgEEAAYFhgeMgYIBRBFGDwyBggGEEUYPDIGCAcQRRg80gEINDU3OWowajeoAgCwAgA&sourceid=chrome&ie=UTF-8#lrd=0x942d67dd3507980d:0x462c1244d5b49b43,1,,,,"
                                     target="_blank"
                                     style={{ color: "#9ca3af" }}
                                     className="hover:text-yellow-400"
@@ -231,13 +268,39 @@ const Footer: React.FC = () => {
                 </Row>
             </div>
             {/* Copyright */}
-            
-                <div style={footerStyles.copyright}>
-                    <Text style={footerStyles.copyrightText}>
-                        &copy; 2025 ForgeLoop. Todos los derechos reservados.
-                    </Text>
+
+            <div style={footerStyles.copyright}>
+                <Text style={footerStyles.copyrightText}>
+                    &copy; 2025 ForgeLoop. Todos los derechos reservados.
+                </Text>
+            </div>
+
+            <Modal
+                open={!!openModal}
+                onCancel={() => setOpenModal(null)}
+                footer={null}
+                centered
+                closeIcon={<CloseOutlined style={{ color: "#fff", fontSize: 20 }} />}
+                width={isMobile ? 300 : 400}
+                styles={{
+                    content: {
+                        backgroundColor: "#444",
+                        borderColor: "#555",
+                        borderWidth: "2px",
+                        borderStyle: "solid",
+                        boxShadow: "none",
+                        color: "#fff",
+                        textAlign: "center",
+                        height: "100%",
+                        borderRadius: "5px"
+                    },
+                }}
+            >
+                <div style={footerStyles.modalContainer(isMobile)}>
+                    {openModal && modalContent[openModal]}
                 </div>
-           
+            </Modal>
+
         </footer >
     )
 }
