@@ -23,6 +23,7 @@ export default defineConfig({
           //COMENTAR EL ENTRY ANTERIOR Y DESCOMENTAR LA DE ABAJO
           //PNPM RUN DEV --HOST EN FULLAPP Y EN SHELL
           //CAMBIAR POR TU IP EL IP QUE ESTA EN ENTRY
+          //POWERSHELL IPCONFIG IPV4 ---> AHI ESTA EL IP
           //EN TU NAVEGADOR http://192.168.0.30:3000
           //entry: "http://192.168.0.30:3001/remoteEntry.js" 
         }
