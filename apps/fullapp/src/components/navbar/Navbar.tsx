@@ -269,7 +269,7 @@ const Navbar: React.FC<NavbarProps> = () => {
                 <Button
                   type="text"
                   style={navbarStyles.whatsappButton}
-                  onClick={() => openExternalLink('https://wa.me/1234567890')}
+                  onClick={() => openExternalLink('https://wa.me/543541214015')}
                   onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
                     backgroundColor: COLORS.whatsapp,
                     color: COLORS.white,

@@ -8,7 +8,7 @@ export const FloatingWhatsApp: React.FC = () => {
   const [isPressed, setIsPressed] = React.useState(false);
 
   const handleWhatsAppClick = () => {
-    openExternalLink('https://wa.me/1234567890');
+    openExternalLink('https://wa.me/543541214015');
   };
 
   const handleMouseLeave = (e: React.MouseEvent<HTMLElement>) => {

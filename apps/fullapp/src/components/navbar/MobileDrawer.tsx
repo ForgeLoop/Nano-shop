@@ -2,6 +2,7 @@ import React from 'react';
 import { Drawer } from 'antd';
 import { PRODUCT_CATEGORIES, navigateTo } from './navbar.constants';
 import { mobileDrawerStyles } from './navbar.styles';
+import { RightOutlined } from '@ant-design/icons';
 
 interface MobileDrawerProps {
   visible: boolean;
@@ -36,10 +37,11 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ visible, onClose }) 
                 className="category-item"
                 onClick={handleIphoneClick}
               >
-                <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <h4 style={mobileDrawerStyles.categoryTitle}>
-                    {category.name} 🠋
+                    {category.name} 
                   </h4>
+                  <RightOutlined />
                 </div>
               </a>
               {iphoneOpen && (
