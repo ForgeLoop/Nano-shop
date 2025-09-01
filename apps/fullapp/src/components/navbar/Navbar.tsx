@@ -3,7 +3,8 @@ import {
   Layout,
   Input,
   Button,
-  Typography
+  Typography,
+  Badge
 } from 'antd';
 import {
   SearchOutlined,
@@ -25,6 +26,8 @@ import { DesktopDropdown } from './DesktopDropdown';
 import { MobileSearchDropdown } from './MobileSearchDropdown';
 import { FloatingWhatsApp } from './FloatingWhatsApp';
 import { WhatsAppLogo } from '../../assets/icons/WhatsAppLogo';
+import { LoginModal } from './LoginModal';
+import { CartItem, CartModal } from './CartModal';
 
 const { Header } = Layout;
 const { Link } = Typography;
@@ -35,6 +38,25 @@ const Navbar: React.FC<NavbarProps> = () => {
   const [searchFocused, setSearchFocused] = React.useState(false);
   const [drawerVisible, setDrawerVisible] = React.useState(false);
   const [mobileSearchVisible, setMobileSearchVisible] = React.useState(false);
+  const [loginOpen, setLoginOpen] = React.useState(false);
+  //const [cart, setCart] = React.useState<CartItem[]>([]);
+  const [cart, setCart] = React.useState<CartItem[]>([
+  {
+    id: "1",
+    nombre: "iPhone 14 Pro",
+    cantidad: 1,
+    precio: 1200,
+    imagen: "/grid/iphone.jpeg",
+  },
+  {
+    id: "2",
+    nombre: "AirPods Pro",
+    cantidad: 2,
+    precio: 250,
+    imagen: "/grid/airpods.jpeg",
+  },
+]);
+  const [cartOpen, setCartOpen] = React.useState(false);
   const isMobile = useIsMobile();
   const searchButtonRef = React.useRef<HTMLButtonElement>(null);
 
@@ -70,6 +92,8 @@ const Navbar: React.FC<NavbarProps> = () => {
   const handleMouseLeave = (element: HTMLElement, defaultStyles: Partial<CSSStyleDeclaration>) => {
     Object.assign(element.style, defaultStyles);
   };
+
+  const handleRemove = (id: string) => setCart(cart.filter(item => item.id !== id));
 
   // ==================== RENDER ====================
 
@@ -119,17 +143,19 @@ const Navbar: React.FC<NavbarProps> = () => {
 
               {/* Right Section - Cart + User */}
               <div style={navbarStyles.mobileRightSection}>
-                <Button
-                  type="text"
-                  icon={<ShoppingCartOutlined />}
-                  style={navbarStyles.iconButton}
-                  onClick={() => navigateTo('/cart')}
-                />
+                <Badge count={cart.reduce((acc, item) => acc + item.cantidad, 0)} size="small" offset={[-2, 2]} style={{ backgroundColor: "#f5222d", boxShadow: "none" , border: "none" }}>
+                  <Button
+                    type="text"
+                    icon={<ShoppingCartOutlined />}
+                    style={navbarStyles.iconButton}
+                    onClick={() => setCartOpen(true)}
+                  />
+                </Badge>
                 <Button
                   type="text"
                   icon={<UserOutlined />}
                   style={navbarStyles.iconButton}
-                  onClick={() => navigateTo('/profile')}
+                  onClick={() => setLoginOpen(true)}
                 />
               </div>
             </>
@@ -234,27 +260,28 @@ const Navbar: React.FC<NavbarProps> = () => {
               <div style={navbarStyles.rightIcons}>
 
                 {/* Cart */}
-                <Button
-                  type="text"
-                  icon={<ShoppingCartOutlined />}
-                  style={navbarStyles.iconButton}
-                  onClick={() => navigateTo('/cart')}
-                  onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
-                    backgroundColor: COLORS.overlay.medium,
-                    transform: 'scale(1.1)'
-                  })}
-                  onMouseLeave={(e) => handleMouseLeave(e.currentTarget, {
-                    backgroundColor: COLORS.overlay.light,
-                    transform: 'scale(1)'
-                  })}
-                />
-
+                <Badge count={cart.reduce((acc, item) => acc + item.cantidad, 0)} size="small" offset={[-2, 2]} style={{ backgroundColor: "#f5222d", boxShadow: "none", border: "none" }}>
+                  <Button
+                    type="text"
+                    icon={<ShoppingCartOutlined />}
+                    style={navbarStyles.iconButton}
+                    onClick={() => setCartOpen(true)}
+                    onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
+                      backgroundColor: COLORS.overlay.medium,
+                      transform: 'scale(1.1)'
+                    })}
+                    onMouseLeave={(e) => handleMouseLeave(e.currentTarget, {
+                      backgroundColor: COLORS.overlay.light,
+                      transform: 'scale(1)'
+                    })}
+                  />
+                </Badge>
                 {/* User */}
                 <Button
                   type="text"
                   icon={<UserOutlined />}
                   style={navbarStyles.iconButton}
-                  onClick={() => navigateTo('/profile')}
+                  onClick={() => setLoginOpen(true)}
                   onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
                     backgroundColor: COLORS.overlay.medium,
                     transform: 'scale(1.1)'
@@ -305,6 +332,17 @@ const Navbar: React.FC<NavbarProps> = () => {
 
       {/* ==================== FLOATING WHATSAPP (MOBILE ONLY) ==================== */}
       {isMobile && <FloatingWhatsApp />}
+
+      {/* ==================== LOGIN MODAL ==================== */}
+      <LoginModal open={loginOpen} onClose={() => setLoginOpen(false)} />
+
+      {/* ==================== CART MODAL ==================== */}
+      <CartModal
+        open={cartOpen}
+        onClose={() => setCartOpen(false)}
+        cart={cart}
+        onRemove={handleRemove}
+      />
     </>
   );
 };
