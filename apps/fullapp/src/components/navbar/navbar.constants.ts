@@ -1,4 +1,5 @@
 // ==================== NAVBAR CONSTANTS ====================
+import { PictureOutlined, MobileOutlined, TagsOutlined, ShoppingOutlined } from '@ant-design/icons';
 
 export const NAVBAR_HEIGHT = '120px';
 
@@ -44,3 +45,11 @@ export const openExternalLink = (url: string) => {
 export interface NavbarProps {
   // Props opcionales para configuración futura
 }
+
+// Opciones del menú hamburguesa para admin
+export const adminMenuOptions = [
+  { key: "carousel", label: "Carousel" },
+  { key: "carouselMobile", label: "Carousel Mobile" },
+  { key: "categorias", label: "Categorías" },
+  { key: "productos", label: "Productos" },
+];

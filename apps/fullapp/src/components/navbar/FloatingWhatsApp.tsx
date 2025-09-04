@@ -5,6 +5,7 @@ import { floatingWhatsAppButton } from './navbar.styles';
 import { WhatsAppLogo } from '../../assets/icons/WhatsAppLogo';
 
 export const FloatingWhatsApp: React.FC = () => {
+  const isAdmin = window.location.pathname.startsWith("/admin");
   const [isPressed, setIsPressed] = React.useState(false);
 
   const handleWhatsAppClick = () => {

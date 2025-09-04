@@ -11,6 +11,11 @@ export const footerStyles = {
         margin: "0 auto",
         padding: isMobile ? "32px 4px 12px" : "48px 0px 24px",
     }),
+    container2: (isMobile: boolean): CSSProperties => ({
+        maxWidth: isMobile ? "100%" : "55%",
+        margin: "0 auto",
+        padding: isMobile ? "32px 16px 12px" : "48px 0px 24px",
+    }),
     card: {
         borderRadius: "5px",
         backgroundColor: "#444",

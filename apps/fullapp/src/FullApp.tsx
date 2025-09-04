@@ -5,7 +5,7 @@ import ProductCategoriesGrid from "./components/grid/Grid";
 import Footer from "./components/footer/Footer";
 import Nosotros from "./pages/Nosotros";
 import Contacto from "./pages/Contacto";
-
+import Admin from "./pages/Admin";
 // ...otros imports
 
 const FullApp: React.FC = () => (
@@ -20,6 +20,8 @@ const FullApp: React.FC = () => (
       } />
       <Route path="/nosotros" element={<Nosotros />} />
       <Route path="/contacto" element={<Contacto />} />
+      <Route path="/admin" element={<Admin />} />
+      <Route path="/admin/:option" element={<Admin />} />
       {/* ...más rutas */}
     </Routes>
     <Footer />

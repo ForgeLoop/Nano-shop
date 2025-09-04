@@ -44,16 +44,15 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose, cart, onRem
             footer={null}
             centered
             title={<Text style={{ color: "#fff", fontSize: 16, fontWeight: "normal" }}>Mi Carrito</Text>}
-            width={400}
             styles={{
-                header: { backgroundColor: "#444", borderBottom: "none", textAlign: "center", padding: "16px" },
+                header: { backgroundColor: "#444", borderBottom: "none", textAlign: "center"},
                 content: {
                     backgroundColor: "#444",
                     borderColor: "#555",
                     borderWidth: "2px",
                     borderStyle: "solid",
                     color: "#fff",
-                    borderRadius: "5px",
+                    borderRadius: "5px"
                 },
             }}
         >
@@ -100,10 +99,12 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose, cart, onRem
                             </List.Item>
                         )}
                     />
-                    <div style={{ textAlign: "right", marginTop: 16 }}>
+                    <div style={{ textAlign: "right", padding: "16px 0" }}>
                         <Text strong style={{ color: "#fff", fontSize: 16 }}>Total: ${total}</Text>
                     </div>
-                    <Button type="primary" block style={{ marginTop: 16, background: "#1890ff", color: "#fff" }} onClick={handleFinish}>
+                    <Button
+                        type="primary"
+                        style={{ background: "#1890ff", color: "#fff", width: "80%", margin: "16px auto", display: "block" }} onClick={handleFinish}>
                         Finalizar compra
                     </Button>
                 </>

@@ -35,27 +35,30 @@ const { Link } = Typography;
 // ==================== COMPONENT ====================
 
 const Navbar: React.FC<NavbarProps> = () => {
+
+  const isAdmin = window.location.pathname.startsWith("/admin");
+
   const [searchFocused, setSearchFocused] = React.useState(false);
   const [drawerVisible, setDrawerVisible] = React.useState(false);
   const [mobileSearchVisible, setMobileSearchVisible] = React.useState(false);
   const [loginOpen, setLoginOpen] = React.useState(false);
   //const [cart, setCart] = React.useState<CartItem[]>([]);
   const [cart, setCart] = React.useState<CartItem[]>([
-  {
-    id: "1",
-    nombre: "iPhone 14 Pro",
-    cantidad: 1,
-    precio: 1200,
-    imagen: "/grid/iphone.jpeg",
-  },
-  {
-    id: "2",
-    nombre: "AirPods Pro",
-    cantidad: 2,
-    precio: 250,
-    imagen: "/grid/airpods.jpeg",
-  },
-]);
+    {
+      id: "1",
+      nombre: "iPhone 14 Pro",
+      cantidad: 1,
+      precio: 1200,
+      imagen: "/grid/iphone.jpeg",
+    },
+    {
+      id: "2",
+      nombre: "AirPods Pro",
+      cantidad: 2,
+      precio: 250,
+      imagen: "/grid/airpods.jpeg",
+    },
+  ]);
   const [cartOpen, setCartOpen] = React.useState(false);
   const isMobile = useIsMobile();
   const searchButtonRef = React.useRef<HTMLButtonElement>(null);
@@ -113,13 +116,15 @@ const Navbar: React.FC<NavbarProps> = () => {
                   style={navbarStyles.hamburgerButton}
                   onClick={toggleDrawer}
                 />
-                <Button
-                  ref={searchButtonRef}
-                  type="text"
-                  icon={<SearchOutlined />}
-                  style={navbarStyles.searchButtonMobile}
-                  onClick={handleMobileSearchClick}
-                />
+                {isAdmin ? null : (
+                  <Button
+                    ref={searchButtonRef}
+                    type="text"
+                    icon={<SearchOutlined />}
+                    style={navbarStyles.searchButtonMobile}
+                    onClick={handleMobileSearchClick}
+                  />
+                )}
               </div>
 
               {/* Center - Logo */}
@@ -143,14 +148,16 @@ const Navbar: React.FC<NavbarProps> = () => {
 
               {/* Right Section - Cart + User */}
               <div style={navbarStyles.mobileRightSection}>
-                <Badge count={cart.reduce((acc, item) => acc + item.cantidad, 0)} size="small" offset={[-2, 2]} style={{ backgroundColor: "#f5222d", boxShadow: "none" , border: "none" }}>
-                  <Button
-                    type="text"
-                    icon={<ShoppingCartOutlined />}
-                    style={navbarStyles.iconButton}
-                    onClick={() => setCartOpen(true)}
-                  />
-                </Badge>
+                {isAdmin ? null : (
+                  <Badge count={cart.reduce((acc, item) => acc + item.cantidad, 0)} size="small" offset={[-2, 2]} style={{ backgroundColor: "#f5222d", boxShadow: "none", border: "none" }}>
+                    <Button
+                      type="text"
+                      icon={<ShoppingCartOutlined />}
+                      style={navbarStyles.iconButton}
+                      onClick={() => setCartOpen(true)}
+                    />
+                  </Badge>
+                )}
                 <Button
                   type="text"
                   icon={<UserOutlined />}
@@ -185,97 +192,102 @@ const Navbar: React.FC<NavbarProps> = () => {
               </div>
 
               {/* ==================== CENTER CONTENT ==================== */}
-              <div style={navbarStyles.centerContent}>
+              {isAdmin ? null : (
+                <div style={navbarStyles.centerContent}>
 
-                {/* Search Bar */}
-                <div style={navbarStyles.searchContainer}>
-                  <Input
-                    placeholder="Buscar productos..."
-                    style={createSearchStyles(searchFocused)}
-                    styles={{
-                      input: {
-                        backgroundColor: 'transparent !important',
-                        color: `${COLORS.white} !important`,
-                        border: 'none !important',
+                  {/* Search Bar */}
+
+                  <div style={navbarStyles.searchContainer}>
+                    <Input
+                      placeholder="Buscar productos..."
+                      style={createSearchStyles(searchFocused)}
+                      styles={{
+                        input: {
+                          backgroundColor: 'transparent !important',
+                          color: `${COLORS.white} !important`,
+                          border: 'none !important',
+                        }
+                      }}
+                      suffix={
+                        <Button
+                          type="text"
+                          icon={<SearchOutlined />}
+                          style={searchSuffixButton}
+                          onMouseEnter={(e) => handleMouseEnter(e.currentTarget, { color: COLORS.white })}
+                          onMouseLeave={(e) => handleMouseLeave(e.currentTarget, { color: COLORS.overlay.dark })}
+                        />
                       }
-                    }}
-                    suffix={
+                      onFocus={() => setSearchFocused(true)}
+                      onBlur={() => setSearchFocused(false)}
+                    />
+                  </div>
+
+                  {/* Navigation Buttons */}
+                  <div style={navbarStyles.navigationButtons}>
+                    <DesktopDropdown
+                      onMouseEnter={handleMouseEnter}
+                      onMouseLeave={handleMouseLeave}
+                    />
+                    <Link href='/nosotros'>
                       <Button
                         type="text"
-                        icon={<SearchOutlined />}
-                        style={searchSuffixButton}
-                        onMouseEnter={(e) => handleMouseEnter(e.currentTarget, { color: COLORS.white })}
-                        onMouseLeave={(e) => handleMouseLeave(e.currentTarget, { color: COLORS.overlay.dark })}
-                      />
-                    }
-                    onFocus={() => setSearchFocused(true)}
-                    onBlur={() => setSearchFocused(false)}
-                  />
+                        style={createButtonStyles()}
+                        onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
+                          color: COLORS.white,
+                          backgroundColor: COLORS.overlay.light
+                        })}
+                        onMouseLeave={(e) => handleMouseLeave(e.currentTarget, {
+                          color: COLORS.overlay.dark,
+                          backgroundColor: COLORS.transparent
+                        })}
+                        onClick={() => navigateTo('/about')}
+                      >
+                        Acerca de
+                      </Button>
+                    </Link>
+                    <Link href='/contacto'>
+                      <Button
+                        type="text"
+                        style={createButtonStyles()}
+                        onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
+                          color: COLORS.white,
+                          backgroundColor: COLORS.overlay.light
+                        })}
+                        onMouseLeave={(e) => handleMouseLeave(e.currentTarget, {
+                          color: COLORS.overlay.dark,
+                          backgroundColor: COLORS.transparent
+                        })}
+                        onClick={() => navigateTo('/contact')}
+                      >
+                        Contacto
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
-
-                {/* Navigation Buttons */}
-                <div style={navbarStyles.navigationButtons}>
-                  <DesktopDropdown
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                  />
-                  <Link href='/nosotros'>
-                    <Button
-                      type="text"
-                      style={createButtonStyles()}
-                      onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
-                        color: COLORS.white,
-                        backgroundColor: COLORS.overlay.light
-                      })}
-                      onMouseLeave={(e) => handleMouseLeave(e.currentTarget, {
-                        color: COLORS.overlay.dark,
-                        backgroundColor: COLORS.transparent
-                      })}
-                      onClick={() => navigateTo('/about')}
-                    >
-                      Acerca de
-                    </Button>
-                  </Link>
-                  <Link href='/contacto'>
-                    <Button
-                      type="text"
-                      style={createButtonStyles()}
-                      onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
-                        color: COLORS.white,
-                        backgroundColor: COLORS.overlay.light
-                      })}
-                      onMouseLeave={(e) => handleMouseLeave(e.currentTarget, {
-                        color: COLORS.overlay.dark,
-                        backgroundColor: COLORS.transparent
-                      })}
-                      onClick={() => navigateTo('/contact')}
-                    >
-                      Contacto
-                    </Button>
-                  </Link>
-                </div>
-              </div>
+              )}
 
               {/* ==================== RIGHT ICONS ==================== */}
               <div style={navbarStyles.rightIcons}>
 
                 {/* Cart */}
-                <Badge count={cart.reduce((acc, item) => acc + item.cantidad, 0)} size="small" offset={[-2, 2]} style={{ backgroundColor: "#f5222d", boxShadow: "none", border: "none" }}>
-                  <Button
-                    type="text"
-                    icon={<ShoppingCartOutlined />}
-                    style={navbarStyles.iconButton}
-                    onClick={() => setCartOpen(true)}
-                    onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
-                      backgroundColor: COLORS.overlay.medium,
-                      transform: 'scale(1.1)'
-                    })}
-                    onMouseLeave={(e) => handleMouseLeave(e.currentTarget, {
-                      backgroundColor: COLORS.overlay.light,
-                      transform: 'scale(1)'
-                    })}
-                  />
-                </Badge>
+                {isAdmin ? null : (
+                  <Badge count={cart.reduce((acc, item) => acc + item.cantidad, 0)} size="small" offset={[-2, 2]} style={{ backgroundColor: "#f5222d", boxShadow: "none", border: "none" }}>
+                    <Button
+                      type="text"
+                      icon={<ShoppingCartOutlined />}
+                      style={navbarStyles.iconButton}
+                      onClick={() => setCartOpen(true)}
+                      onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
+                        backgroundColor: COLORS.overlay.medium,
+                        transform: 'scale(1.1)'
+                      })}
+                      onMouseLeave={(e) => handleMouseLeave(e.currentTarget, {
+                        backgroundColor: COLORS.overlay.light,
+                        transform: 'scale(1)'
+                      })}
+                    />
+                  </Badge>
+                )}
                 {/* User */}
                 <Button
                   type="text"
@@ -293,23 +305,25 @@ const Navbar: React.FC<NavbarProps> = () => {
                 />
 
                 {/* WhatsApp */}
-                <Button
-                  type="text"
-                  style={navbarStyles.whatsappButton}
-                  onClick={() => openExternalLink('https://wa.me/543541214015')}
-                  onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
-                    backgroundColor: COLORS.whatsapp,
-                    color: COLORS.white,
-                    transform: 'scale(1.1)'
-                  })}
-                  onMouseLeave={(e) => handleMouseLeave(e.currentTarget, {
-                    backgroundColor: COLORS.white,
-                    color: COLORS.whatsapp,
-                    transform: 'scale(1)'
-                  })}
-                >
-                  <WhatsAppLogo width={20} height={20} />
-                </Button>
+                {isAdmin ? null : (
+                  <Button
+                    type="text"
+                    style={navbarStyles.whatsappButton}
+                    onClick={() => openExternalLink('https://wa.me/543541214015')}
+                    onMouseEnter={(e) => handleMouseEnter(e.currentTarget, {
+                      backgroundColor: COLORS.whatsapp,
+                      color: COLORS.white,
+                      transform: 'scale(1.1)'
+                    })}
+                    onMouseLeave={(e) => handleMouseLeave(e.currentTarget, {
+                      backgroundColor: COLORS.white,
+                      color: COLORS.whatsapp,
+                      transform: 'scale(1)'
+                    })}
+                  >
+                    <WhatsAppLogo width={20} height={20} />
+                  </Button>
+                )}
               </div>
             </>
           )}
@@ -331,7 +345,7 @@ const Navbar: React.FC<NavbarProps> = () => {
       />
 
       {/* ==================== FLOATING WHATSAPP (MOBILE ONLY) ==================== */}
-      {isMobile && <FloatingWhatsApp />}
+      {isMobile && !isAdmin && <FloatingWhatsApp />}
 
       {/* ==================== LOGIN MODAL ==================== */}
       <LoginModal open={loginOpen} onClose={() => setLoginOpen(false)} />

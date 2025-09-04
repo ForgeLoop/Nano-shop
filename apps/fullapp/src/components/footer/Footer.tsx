@@ -125,7 +125,7 @@ const Footer: React.FC = () => {
             </div>
 
             {/* Main Footer Content */}
-            <div style={footerStyles.container(isMobile)}>
+            <div style={footerStyles.container2(isMobile)}>
                 <Row gutter={[32, 32]}>
                     <Col xs={12} md={6} lg={6}>
                         <Space direction="vertical" size="middle" style={footerStyles.mainContentSpace}  >
