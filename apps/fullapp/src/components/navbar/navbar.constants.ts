@@ -47,9 +47,11 @@ export interface NavbarProps {
 }
 
 // Opciones del menú hamburguesa para admin
-export const adminMenuOptions = [
+export const menuItems = [
   { key: "carousel", label: "Carousel" },
   { key: "carouselMobile", label: "Carousel Mobile" },
   { key: "categorias", label: "Categorías" },
   { key: "productos", label: "Productos" },
+  { key: "contacto", label: "Contacto" },
+  { key: "nosotros", label: "Nosotros" },
 ];

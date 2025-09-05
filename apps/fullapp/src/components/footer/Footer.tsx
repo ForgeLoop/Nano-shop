@@ -13,10 +13,19 @@ import {
 import { useIsMobile } from "../../hooks/useWindowSize"
 import { footerStyles } from "./footer.styles"
 import { Image } from "antd"
+import { initialContacto } from "../admin/admin.constants";
 
 const { Title, Text, Link } = Typography
 
 const Footer: React.FC = () => {
+    if (window.location.pathname.startsWith("/admin")) return null;
+
+    const direccion = initialContacto.find(item => item.key === "direccion")?.value;
+    const ciudad = initialContacto.find(item => item.key === "ciudad")?.value;
+    const horario = initialContacto.find(item => item.key === "horario")?.value;
+    const horarioParts = horario ? horario.split(":") : [];
+    const email = initialContacto.find(item => item.key === "email")?.value;
+
     const isMobile = useIsMobile(768);
     const logoDivRef = useRef<HTMLDivElement>(null);
     const [logoDivHeight, setLogoDivHeight] = useState<number>(0);
@@ -150,22 +159,22 @@ const Footer: React.FC = () => {
                                 <Space align="start" style={footerStyles.description(isMobile)}>
                                     <EnvironmentOutlined style={{ color: "#60a5fa" }} />
                                     <div>
-                                        <div>Roque Saenz Peña 157</div>
-                                        <div>Villa Carlos Paz, Córdoba, Argentina</div>
+                                        <div>{direccion}</div>
+                                        <div>{ciudad}</div>
                                     </div>
                                 </Space>
 
                                 <Space align="start" style={footerStyles.description(isMobile)}>
                                     <ClockCircleOutlined style={{ color: "#60a5fa" }} />
                                     <div>
-                                        <div>Lunes a Sabado de:</div>
-                                        <div>9:00 - 13:00 y 16:30 - 20:30</div>
+                                        <div>{horarioParts[0]}:</div>
+                                        <div>{horarioParts.slice(1).join(":").trim()}</div>
                                     </div>
                                 </Space>
 
                                 <Space style={footerStyles.description(isMobile)}>
                                     <MailOutlined style={{ color: "#60a5fa" }} />
-                                    <span>nanoshop.it@gmail.com</span>
+                                    <span>{email}</span>
                                 </Space>
                             </Space>
                         </Space>

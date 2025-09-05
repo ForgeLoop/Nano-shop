@@ -1,6 +1,6 @@
 import React from 'react';
 import { Drawer } from 'antd';
-import { PRODUCT_CATEGORIES, navigateTo, adminMenuOptions } from './navbar.constants';
+import { PRODUCT_CATEGORIES, navigateTo, menuItems } from './navbar.constants';
 import { mobileDrawerStyles } from './navbar.styles';
 import { RightOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
@@ -30,7 +30,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ visible, onClose }) 
     >
       <div>
         {isAdmin ? (
-          adminMenuOptions.map((option) => (
+          menuItems.map((option) => (
             <a
               key={option.key}
               href="#"

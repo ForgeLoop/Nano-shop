@@ -1,459 +1,361 @@
-import { useState } from "react"
+import { useState } from "react";
 import {
-  Layout,
-  Menu,
   Button,
-  Table,
-  Modal,
-  Form,
-  Input,
-  Space,
-  Typography,
-  Upload,
-  message,
-  Card,
-  Row,
-  Col,
-  Drawer,
   FloatButton,
-} from "antd"
-import {
-  TagsOutlined,
-  ShoppingOutlined,
-  PictureOutlined,
-  MobileOutlined,
-  UploadOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-} from "@ant-design/icons"
-import { useNavigate, useParams } from "react-router-dom"
-import { useIsMobile } from "../hooks/useWindowSize"
+  Image,
+  Layout, Menu, message,
+  Space
+} from "antd";
+import { EditOutlined, PlusOutlined, ShoppingOutlined, TagsOutlined } from "@ant-design/icons";
+import { useNavigate, useParams } from "react-router-dom";
+import { useIsMobile } from "../hooks/useWindowSize";
+import { adminStyles } from "./pages.styles";
+import RenderMobileList from "../components/admin/RenderMobileList";
+import RenderDesktopList from "../components/admin/RenderDesktopList";
+import { categoryColumns } from "../components/admin/categoryColums";
+import { productColumns } from "../components/admin/productColumns";
+import { DeleteModal } from "../components/admin/DeleteModal";
+import { menuItems } from "../components/navbar/navbar.constants";
+import { ItemModal } from "../components/admin/ItemModal";
+import { contactoFields, initialContacto, initialNosotros, nosotrosFields, NosotrosItem, categoryFields, productFields, initialCategories, initialProducts, Category, Product } from "../components/admin/admin.constants";
 
-const { Content } = Layout
-const { Title, Text } = Typography
 
-type Category = { key: string; nombre: string; imagen: string }
-type Product = { key: string; nombre: string; categoria: string; precio: number; imagen: string }
+const { Content } = Layout;
 
-const initialCategories: Category[] = [
-  { key: "1", nombre: "Celulares", imagen: "" },
-  { key: "2", nombre: "Auriculares", imagen: "" },
-  { key: "3", nombre: "Accesorios", imagen: "" },
-]
+export default function Admin() {
+  const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const { option = "categorias" } = useParams<{ option?: string }>();
+  const [categories, setCategories] = useState(initialCategories);
+  const [products, setProducts] = useState(initialProducts);
+  const [contacto, setContacto] = useState(initialContacto);
+  const [nosotros, setNosotros] = useState<NosotrosItem[]>([...initialNosotros]);
 
-const initialProducts: Product[] = [
-  { key: "1", nombre: "iPhone 14 Pro", categoria: "Celulares", precio: 1200, imagen: "" },
-  { key: "2", nombre: "AirPods Pro", categoria: "Auriculares", precio: 250, imagen: "" },
-]
+  // Modales y estados
+  const [catModalOpen, setCatModalOpen] = useState(false);
+  const [catEdit, setCatEdit] = useState<Category | null>(null);
+  const [catImage, setCatImage] = useState("");
+  const [prodModalOpen, setProdModalOpen] = useState(false);
+  const [prodEdit, setProdEdit] = useState<Product | null>(null);
+  const [prodImage, setProdImage] = useState("");
+  const [catDelete, setCatDelete] = useState<Category | null>(null);
+  const [prodDelete, setProdDelete] = useState<Product | null>(null);
+  const [contactoModalOpen, setContactoModalOpen] = useState(false);
+  const [contactoCampoEdit, setContactoCampoEdit] = useState<string | null>(null);
+  const [nosotrosModalOpen, setNosotrosModalOpen] = useState(false);
+  const [nosotrosCampoEdit, setNosotrosCampoEdit] = useState<string | null>(null);
+  const [nosotrosImage, setNosotrosImage] = useState<string>("/local.jpeg");
+  const [nosotrosImageModalOpen, setNosotrosImageModalOpen] = useState(false);
 
-export default function AdminMobile() {
-  const isMobile = useIsMobile()
-  const navigate = useNavigate()
-  const { option = "categorias" } = useParams<{ option?: string }>()
-  const [categories, setCategories] = useState<Category[]>(initialCategories)
-  const [products, setProducts] = useState<Product[]>(initialProducts)
-  const [drawerOpen, setDrawerOpen] = useState(false)
 
-  // Modal para crear/editar categoría
-  const [catModalOpen, setCatModalOpen] = useState(false)
-  const [catEdit, setCatEdit] = useState<Category | null>(null)
-  const [catImage, setCatImage] = useState("")
-
-  // Modal para crear/editar producto
-  const [prodModalOpen, setProdModalOpen] = useState(false)
-  const [prodEdit, setProdEdit] = useState<Product | null>(null)
-  const [prodImage, setProdImage] = useState("")
-
-  // Modal de confirmación de eliminación
-  const [catDelete, setCatDelete] = useState<Category | null>(null)
-  const [prodDelete, setProdDelete] = useState<Product | null>(null)
-
-  // --- Imagen Upload ---
+  // Imagen Upload
   const beforeUpload = (file: File, setImage: (url: string) => void) => {
-    const isImage = file.type.startsWith("image/")
+    const isImage = file.type.startsWith("image/");
     if (!isImage) {
-      message.error("Solo se permiten imágenes.")
-      return false
+      message.error("Solo se permiten imágenes.");
+      return false;
     }
-    const reader = new FileReader()
-    reader.onload = (e) => setImage(e.target?.result as string)
-    reader.readAsDataURL(file)
-    return false
-  }
+    const reader = new FileReader();
+    reader.onload = (e) => setImage(e.target?.result as string);
+    reader.readAsDataURL(file);
+    return false;
+  };
 
-  // --- Categorías ---
+  // Categorías
   const handleCatSave = (values: { nombre: string }) => {
-    const imagen = catImage
+    const imagen = catImage;
     if (catEdit) {
-      setCategories(categories.map((c) => (c.key === catEdit.key ? { ...c, nombre: values.nombre, imagen } : c)))
+      setCategories(categories.map((c) => (c.key === catEdit.key ? { ...c, nombre: values.nombre, imagen } : c)));
     } else {
-      setCategories([...categories, { key: Date.now().toString(), nombre: values.nombre, imagen }])
+      setCategories([...categories, { key: Date.now().toString(), nombre: values.nombre, imagen }]);
     }
-    setCatModalOpen(false)
-    setCatEdit(null)
-    setCatImage("")
-  }
+    setCatModalOpen(false);
+    setCatEdit(null);
+    setCatImage("");
+  };
+  const handleCatDelete = (key: string) => setCategories(categories.filter((c) => c.key !== key));
 
-  const handleCatDelete = (key: string) => setCategories(categories.filter((c) => c.key !== key))
-
-  // --- Productos ---
+  // Productos
   const handleProdSave = (values: { nombre: string; categoria: string; precio: number }) => {
-    const imagen = prodImage
+    const imagen = prodImage;
     if (prodEdit) {
-      setProducts(products.map((p) => (p.key === prodEdit.key ? { ...p, ...values, imagen } : p)))
+      setProducts(products.map((p) => (p.key === prodEdit.key ? { ...p, ...values, imagen } : p)));
     } else {
-      setProducts([...products, { key: Date.now().toString(), ...values, imagen }])
+      setProducts([...products, { key: Date.now().toString(), ...values, imagen }]);
     }
-    setProdModalOpen(false)
-    setProdEdit(null)
-    setProdImage("")
-  }
+    setProdModalOpen(false);
+    setProdEdit(null);
+    setProdImage("");
+  };
+  const handleProdDelete = (key: string) => setProducts(products.filter((p) => p.key !== key));
 
-  const handleProdDelete = (key: string) => setProducts(products.filter((p) => p.key !== key))
+  const handleContactoSave = (values) => {
+    setContacto(values);
+    setContactoModalOpen(false);
+  };
 
-  // --- Panel lateral ---
-  const menuItems = [
-        { key: "carousel", icon: <PictureOutlined />, label: "Carousel" },
-        { key: "carouselMobile", icon: <MobileOutlined />, label: "Carousel Mobile" },
-        { key: "categorias", icon: <TagsOutlined />, label: "Categorías" },
-        { key: "productos", icon: <ShoppingOutlined />, label: "Productos" },
-  ]
+  const handleAgregarParrafo = () => {
+    const nuevoKey = `parrafo${nosotros.length + 1}`;
+    setNosotros([
+      ...nosotros,
+      { key: nuevoKey, label: `Párrafo ${nosotros.length + 1}`, value: "" }
+    ]);
+    setNosotrosCampoEdit(nuevoKey);
+    setNosotrosModalOpen(true);
+  };
 
-  // Renderizado mobile para categorías
-  const renderMobileCategories = () => (
-    <div style={{ padding: "16px" }}>
-      <Title level={3} style={{ textAlign: "center", marginBottom: "24px" }}>
-        Categorías
-      </Title>
-
-      <Row gutter={[16, 16]}>
-        {categories.map((category) => (
-          <Col span={24} key={category.key}>
-            <Card
-              style={{
-                borderRadius: "12px",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-              }}
-              bodyStyle={{ padding: "16px" }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                {category.imagen ? (
-                  <img
-                    src={category.imagen || "/placeholder.svg"}
-                    alt={category.nombre}
-                    style={{
-                      width: "60px",
-                      height: "60px",
-                      objectFit: "cover",
-                      borderRadius: "8px",
-                      flexShrink: 0,
-                    }}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      width: "60px",
-                      height: "60px",
-                      backgroundColor: "#f0f0f0",
-                      borderRadius: "8px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                    }}
-                  >
-                    <TagsOutlined style={{ fontSize: "24px", color: "#999" }} />
-                  </div>
-                )}
-
-                <div style={{ flex: 1 }}>
-                  <Text strong style={{ fontSize: "16px" }}>
-                    {category.nombre}
-                  </Text>
-                </div>
-
-                <Space>
-                  <Button
-                    type="text"
-                    icon={<EditOutlined />}
-                    onClick={() => {
-                      setCatEdit(category)
-                      setCatModalOpen(true)
-                      setCatImage(category.imagen || "")
-                    }}
-                    style={{ color: "#1890ff" }}
-                  />
-                  <Button
-                    type="text"
-                    icon={<DeleteOutlined />}
-                    onClick={() => setCatDelete(category)}
-                    style={{ color: "#ff4d4f" }}
-                  />
-                </Space>
-              </div>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-    </div>
-  )
-
-  // Renderizado mobile para productos
-  const renderMobileProducts = () => (
-    <div style={{ padding: "16px" }}>
-      <Title level={3} style={{ textAlign: "center", marginBottom: "24px" }}>
-        Productos
-      </Title>
-
-      <Row gutter={[16, 16]}>
-        {products.map((product) => (
-          <Col span={24} key={product.key}>
-            <Card
-              style={{
-                borderRadius: "12px",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-              }}
-              bodyStyle={{ padding: "16px" }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                {product.imagen ? (
-                  <img
-                    src={product.imagen || "/placeholder.svg"}
-                    alt={product.nombre}
-                    style={{
-                      width: "60px",
-                      height: "60px",
-                      objectFit: "cover",
-                      borderRadius: "8px",
-                      flexShrink: 0,
-                    }}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      width: "60px",
-                      height: "60px",
-                      backgroundColor: "#f0f0f0",
-                      borderRadius: "8px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                    }}
-                  >
-                    <ShoppingOutlined style={{ fontSize: "24px", color: "#999" }} />
-                  </div>
-                )}
-
-                <div style={{ flex: 1 }}>
-                  <Text strong style={{ fontSize: "16px", display: "block" }}>
-                    {product.nombre}
-                  </Text>
-                  <Text type="secondary" style={{ fontSize: "14px", display: "block" }}>
-                    {product.categoria}
-                  </Text>
-                  <Text style={{ fontSize: "16px", color: "#52c41a", fontWeight: "600" }}>${product.precio}</Text>
-                </div>
-
-                <Space>
-                  <Button
-                    type="text"
-                    icon={<EditOutlined />}
-                    onClick={() => {
-                      setProdEdit(product)
-                      setProdModalOpen(true)
-                      setProdImage(product.imagen || "")
-                    }}
-                    style={{ color: "#1890ff" }}
-                  />
-                  <Button
-                    type="text"
-                    icon={<DeleteOutlined />}
-                    onClick={() => setProdDelete(product)}
-                    style={{ color: "#ff4d4f" }}
-                  />
-                </Space>
-              </div>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-    </div>
-  )
-
-  // Renderizado desktop (tabla original)
-  const renderDesktopCategories = () => (
-    <div style={{ padding: "32px" }}>
-      <Title level={3} style={{ textAlign: "center" }}>
-        Categorías
-      </Title>
-
-      <Table
-        dataSource={categories}
-        columns={[
-          {
-            title: "Imagen",
-            dataIndex: "imagen",
-            key: "imagen",
-            render: (img: string) =>
-              img ? (
-                <img
-                  src={img || "/placeholder.svg"}
-                  alt="cat"
-                  style={{
-                    width: 40,
-                    height: 40,
-                    objectFit: "cover",
-                    borderRadius: 8,
-                  }}
-                />
-              ) : null,
-          },
-          { title: "Nombre", dataIndex: "nombre", key: "nombre" },
-          {
-            title: "Acciones",
-            key: "acciones",
-            render: (_: any, record: Category) => (
-              <Space>
-                <Button
-                  type="link"
-                  onClick={() => {
-                    setCatEdit(record)
-                    setCatModalOpen(true)
-                    setCatImage(record.imagen || "")
-                  }}
-                >
-                  Editar
-                </Button>
-                <Button type="link" danger onClick={() => setCatDelete(record)}>
-                  Eliminar
-                </Button>
-              </Space>
-            ),
-          },
-        ]}
-        pagination={false}
-      />
-      <Button
-        onClick={() => {
-          setCatModalOpen(true)
-          setCatImage("")
-        }}
-        style={{
-          marginTop: 16,
-          display: "flex",
-          marginLeft: "auto",
-          marginRight: "auto",
-          backgroundColor: "#555",
-          boxShadow: "0 2px 8px rgba(85,85,85,0.25)",
-          border: "none",
-          color: "#fff",
-        }}
-      >
-        Crear nueva categoría
-      </Button>
-    </div>
-  )
-
-  const renderDesktopProducts = () => (
-    <div style={{ padding: "32px" }}>
-      <Title level={3} style={{ textAlign: "center" }}>
-        Productos
-      </Title>
-      <Table
-        dataSource={products}
-        columns={[
-          {
-            title: "Imagen",
-            dataIndex: "imagen",
-            key: "imagen",
-            render: (img: string) =>
-              img ? (
-                <img
-                  src={img || "/placeholder.svg"}
-                  alt="prod"
-                  style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 8 }}
-                />
-              ) : null,
-          },
-          { title: "Nombre", dataIndex: "nombre", key: "nombre" },
-          { title: "Categoría", dataIndex: "categoria", key: "categoria" },
-          { title: "Precio", dataIndex: "precio", key: "precio", render: (v) => `$${v}` },
-          {
-            title: "Acciones",
-            key: "acciones",
-            render: (_: any, record: Product) => (
-              <Space>
-                <Button
-                  type="link"
-                  onClick={() => {
-                    setProdEdit(record)
-                    setProdModalOpen(true)
-                    setProdImage(record.imagen || "")
-                  }}
-                >
-                  Editar
-                </Button>
-                <Button type="link" danger onClick={() => setProdDelete(record)}>
-                  Eliminar
-                </Button>
-              </Space>
-            ),
-          },
-        ]}
-        pagination={false}
-      />
-      <Button
-        onClick={() => {
-          setProdModalOpen(true)
-          setProdImage("")
-        }}
-        style={{
-          marginTop: 16,
-          display: "block",
-          marginLeft: "auto",
-          marginRight: "auto",
-          backgroundColor: "#555",
-          boxShadow: "0 2px 8px rgba(85,85,85,0.25)",
-          border: "none",
-          color: "#fff",
-        }}
-      >
-        Crear nuevo producto
-      </Button>
-    </div>
-  )
-
+  // Para eliminar un párrafo
+  const handleEliminarParrafo = (key: string) => {
+    setNosotros(nosotros.filter(item => item.key !== key));
+  };
   // --- Render contenido ---
-  let content
+  let content;
   if (option === "categorias") {
-    content = isMobile ? renderMobileCategories() : renderDesktopCategories()
+    content = isMobile
+      ? (
+        <RenderMobileList
+          title="Categorías"
+          items={categories}
+          getTitle={cat => cat.nombre}
+          getDescription={null}
+          getPrice={null}
+          getImage={cat => cat.imagen}
+          defaultIcon={<TagsOutlined style={adminStyles.iconItem} />}
+          onEdit={cat => {
+            setCatEdit(cat);
+            setCatModalOpen(true);
+            setCatImage(cat.imagen || "");
+          }}
+          onDelete={cat => setCatDelete(cat)}
+          adminStyles={adminStyles}
+        />
+      )
+      : (
+        <RenderDesktopList
+          title="Categorías"
+          items={categories}
+          columns={() => categoryColumns(
+            cat => {
+              setCatEdit(cat);
+              setCatModalOpen(true);
+              setCatImage(cat?.imagen || "");
+            },
+            cat => setCatDelete(cat),
+            adminStyles
+          )}
+          onEdit={cat => {
+            setCatEdit(cat);
+            setCatModalOpen(true);
+            setCatImage(cat?.imagen || "");
+          }}
+          onDelete={cat => setCatDelete(cat)}
+          adminStyles={adminStyles}
+          createButtonText="Crear nueva categoría"
+        />
+      );
   } else if (option === "productos") {
-    content = isMobile ? renderMobileProducts() : renderDesktopProducts()
+    content = isMobile
+      ? (
+        <RenderMobileList
+          title="Productos"
+          items={products}
+          getTitle={prod => prod.nombre}
+          getDescription={prod => prod.categoria}
+          getPrice={prod => `$${prod.precio}`}
+          getImage={prod => prod.imagen}
+          defaultIcon={<ShoppingOutlined style={adminStyles.iconItem} />}
+          onEdit={prod => {
+            setProdEdit(prod);
+            setProdModalOpen(true);
+            setProdImage(prod.imagen || "");
+          }}
+          onDelete={prod => setProdDelete(prod)}
+          adminStyles={adminStyles}
+        />
+      )
+      : (
+        <RenderDesktopList
+          title="Productos"
+          items={products}
+          columns={() => productColumns(
+            prod => {
+              setProdEdit(prod);
+              setProdModalOpen(true);
+              setProdImage(prod?.imagen || "");
+            },
+            prod => setProdDelete(prod),
+            adminStyles
+          )}
+          onEdit={prod => {
+            setProdEdit(prod);
+            setProdModalOpen(true);
+            setProdImage(prod?.imagen || "");
+          }}
+          onDelete={prod => setProdDelete(prod)}
+          adminStyles={adminStyles}
+          createButtonText="Crear nuevo producto"
+        />
+      );
   } else if (option === "carousel") {
     content = (
       <div style={{ padding: isMobile ? "16px" : "32px" }}>
-        <Title level={3} style={{ textAlign: "center" }}>
-          Carousel
-        </Title>
+        <h3 style={adminStyles.menuTitle}>Carousel</h3>
         <p>Gestión de imágenes del carousel (pendiente).</p>
       </div>
-    )
+    );
   } else if (option === "carouselMobile") {
     content = (
       <div style={{ padding: isMobile ? "16px" : "32px" }}>
-        <Title level={3} style={{ textAlign: "center" }}>
-          Carousel Mobile
-        </Title>
+        <h3 style={adminStyles.menuTitle}>Carousel Mobile</h3>
         <p>Gestión de imágenes del carousel mobile (pendiente).</p>
       </div>
-    )
+    );
+  } else if (option === "contacto") {
+    content = isMobile
+      ? (
+        <RenderMobileList
+          title="Contacto"
+          items={contacto}
+          getTitle={item => item.label}
+          getDescription={item => item.value}
+          getPrice={null}
+          getImage={null}
+          defaultIcon={null}
+          onEdit={(item) => {
+            setContactoCampoEdit(item.key); // Editar campo individual
+            setContactoModalOpen(true);
+          }}
+          adminStyles={adminStyles}
+        />
+      )
+      : (
+        <RenderDesktopList
+          title="Contacto"
+          items={contacto}
+          columns={() => [
+            { title: "Campo", dataIndex: "label", key: "label" },
+            { title: "Valor", dataIndex: "value", key: "value" }
+          ]}
+          onEdit={() => {
+            setContactoCampoEdit(null); // Editar todos los campos
+            setContactoModalOpen(true);
+          }}
+          adminStyles={adminStyles}
+          createButtonText="Editar contacto"
+        />
+      );
+  } else if (option === "nosotros") {
+    content = isMobile
+      ? (
+        <RenderMobileList
+          title="Nosotros"
+          items={nosotros}
+          getTitle={item => item.label}
+          getDescription={item => item.value}
+          getPrice={null}
+          getImage={null}
+          defaultIcon={null}
+          onEdit={item => {
+            setNosotrosCampoEdit(item.key);
+            setNosotrosModalOpen(true);
+          }}
+          onDelete={item => handleEliminarParrafo(item.key)}
+          adminStyles={adminStyles}
+          imagePreview={
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginBottom: 16
+            }}>
+              <img
+                src={nosotrosImage}
+                alt="Imagen de Nosotros"
+                style={{
+                  width: 120,
+                  height: 80,
+                  objectFit: "cover",
+                  borderRadius: 8,
+                  display: "block"
+                }}
+              />
+              <Button
+                type="text"
+                size="large"
+                icon={<EditOutlined />}
+                style={{ color: "#1890ff", marginTop: 8 }}
+                onClick={() => setNosotrosImageModalOpen(true)}
+              >
+                Editar imagen
+              </Button>
+            </div>
+          }
+        />
+      )
+      : (
+        <RenderDesktopList
+          title="Nosotros"
+          items={nosotros}
+          columns={({ onEdit, onDelete, adminStyles }) => [
+            { title: "Campo", dataIndex: "label", key: "label" },
+            { title: "Valor", dataIndex: "value", key: "value" },
+            {
+              title: "Acciones",
+              key: "acciones",
+              render: (_: any, record: NosotrosItem) => (
+                <Space>
+                  <Button type="link" onClick={() => {
+                    setNosotrosCampoEdit(record.key);
+                    setNosotrosModalOpen(true);
+                  }}>
+                    Editar
+                  </Button>
+                  <Button type="link" danger onClick={() => handleEliminarParrafo(record.key)}>
+                    Eliminar
+                  </Button>
+                </Space>
+              ),
+            }
+          ]}
+          onEdit={() => handleAgregarParrafo()}
+          adminStyles={adminStyles}
+          createButtonText="Agregar párrafo"
+          imagePreview={
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginBottom: 16
+            }}>
+              <img
+                src={nosotrosImage}
+                alt="Imagen de Nosotros"
+                style={{
+                  width: 120,
+                  height: 80,
+                  objectFit: "cover",
+                  borderRadius: 8,
+                  display: "block"
+                }}
+              />
+              <Button
+                type="text"
+                size="large"
+                icon={<EditOutlined />}
+                style={{ color: "#1890ff", marginTop: 8 }}
+                onClick={() => setNosotrosImageModalOpen(true)}
+              >
+                Editar imagen
+              </Button>
+            </div>
+          }
+        />
+      );
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#444" }}>
-      <Layout style={{ minHeight: "100vh", width: isMobile ? "100%" : "60%", margin: "0 auto" }}>
+    <div style={adminStyles.container}>
+      <Layout style={adminStyles.layout(isMobile)}>
         {/* Desktop Sidebar */}
         {!isMobile && (
           <Layout.Sider width={220} style={{ background: "#222" }}>
@@ -462,29 +364,15 @@ export default function AdminMobile() {
               mode="inline"
               selectedKeys={[option]}
               onClick={(item: { key: string }) => {
-                navigate(`/admin/${item.key}`)
+                navigate(`/admin/${item.key}`);
               }}
               items={menuItems}
-              style={{
-                height: "100%",
-                borderRight: 0,
-                fontSize: 16,
-                backgroundColor: "#333",
-                color: "#fff",
-                paddingTop: 20,
-              }}
+              style={adminStyles.menuSidebar}
             />
           </Layout.Sider>
         )}
 
-        <Content
-          style={{
-            background: "#f4f4f4",
-            maxWidth: isMobile ? "100vw" : "100%",
-            overflowX: isMobile ? "hidden" : "visible",
-            paddingBottom: isMobile ? "80px" : "0",
-          }}
-        >
+        <Content style={adminStyles.contentContainer(isMobile)}>
           {content}
         </Content>
 
@@ -493,157 +381,193 @@ export default function AdminMobile() {
           <FloatButton
             icon={<PlusOutlined />}
             type="primary"
-            style={{
-              right: 24,
-              bottom: 24,
-              width: 56,
-              height: 56,
-            }}
+            style={adminStyles.createItemFloatButton}
             onClick={() => {
               if (option === "categorias") {
-                setCatModalOpen(true)
-                setCatImage("")
+                setCatEdit(null);
+                setCatModalOpen(true);
+                setCatImage("");
               } else {
-                setProdModalOpen(true)
-                setProdImage("")
+                setProdEdit(null);
+                setProdModalOpen(true);
+                setProdImage("");
               }
             }}
           />
         )}
       </Layout>
 
-      {/* Modales (sin cambios) */}
-      <Modal
-        centered
+      {/* Modales */}
+      <ItemModal
         open={catModalOpen}
+        onCancel={() => {
+          setCatModalOpen(false);
+          setCatEdit(null);
+          setCatImage("");
+        }}
+        onFinish={handleCatSave}
+        initialValues={catEdit || { nombre: "" }}
+        fields={categoryFields}
+        image={catImage}
+        setImage={setCatImage}
+        beforeUpload={beforeUpload}
+        isMobile={isMobile}
+        adminStyles={adminStyles}
+        isEdit={!!catEdit}
         title={catEdit ? "Editar categoría" : "Crear categoría"}
-        onCancel={() => {
-          setCatModalOpen(false)
-          setCatEdit(null)
-          setCatImage("")
-        }}
-        footer={null}
-        width={isMobile ? "90%" : 520}
-      >
-        <Form initialValues={catEdit || { nombre: "" }} onFinish={handleCatSave} layout="vertical">
-          <Form.Item name="nombre" label="Nombre" rules={[{ required: true, message: "Ingrese el nombre" }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item label="Imagen">
-            <Upload showUploadList={false} beforeUpload={(file) => beforeUpload(file, setCatImage)} accept="image/*">
-              <Button icon={<UploadOutlined />}>Seleccionar imagen</Button>
-            </Upload>
-            {catImage && (
-              <div style={{ marginTop: 12 }}>
-                <img
-                  src={catImage || "/placeholder.svg"}
-                  alt="preview"
-                  style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 8 }}
-                />
-              </div>
-            )}
-          </Form.Item>
-          <Button type="primary" htmlType="submit" block>
-            {catEdit ? "Guardar cambios" : "Crear"}
-          </Button>
-        </Form>
-      </Modal>
+        categories={categories}
+      />
 
-      <Modal
-        centered
+      <ItemModal
         open={prodModalOpen}
-        title={prodEdit ? "Editar producto" : "Crear producto"}
         onCancel={() => {
-          setProdModalOpen(false)
-          setProdEdit(null)
-          setProdImage("")
+          setProdModalOpen(false);
+          setProdEdit(null);
+          setProdImage("");
         }}
-        footer={null}
-        width={isMobile ? "90%" : 520}
-      >
-        <Form
-          initialValues={prodEdit || { nombre: "", categoria: "", precio: "" }}
-          onFinish={handleProdSave}
-          layout="vertical"
-        >
-          <Form.Item name="nombre" label="Nombre" rules={[{ required: true, message: "Ingrese el nombre" }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="categoria" label="Categoría" rules={[{ required: true, message: "Ingrese la categoría" }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="precio" label="Precio" rules={[{ required: true, message: "Ingrese el precio" }]}>
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item label="Imagen">
-            <Upload showUploadList={false} beforeUpload={(file) => beforeUpload(file, setProdImage)} accept="image/*">
-              <Button icon={<UploadOutlined />}>Seleccionar imagen</Button>
-            </Upload>
-            {prodImage && (
-              <div style={{ marginTop: 12 }}>
-                <img
-                  src={prodImage || "/placeholder.svg"}
-                  alt="preview"
-                  style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 8 }}
-                />
-              </div>
-            )}
-          </Form.Item>
-          <Button type="primary" htmlType="submit" block>
-            {prodEdit ? "Guardar cambios" : "Crear"}
-          </Button>
-        </Form>
-      </Modal>
+        onFinish={handleProdSave}
+        initialValues={prodEdit || { nombre: "", categoria: "", precio: "" }}
+        fields={productFields}
+        image={prodImage}
+        setImage={setProdImage}
+        beforeUpload={beforeUpload}
+        isMobile={isMobile}
+        adminStyles={adminStyles}
+        isEdit={!!prodEdit}
+        title={prodEdit ? "Editar producto" : "Crear producto"}
+        categories={categories}
+      />
 
-      <Modal
-        centered
+      <ItemModal
+        open={contactoModalOpen}
+        onCancel={() => {
+          setContactoModalOpen(false);
+          setContactoCampoEdit(null);
+        }}
+        onFinish={(values) => {
+          if (contactoCampoEdit) {
+            // Editar solo un campo
+            setContacto(contacto.map(item =>
+              item.key === contactoCampoEdit
+                ? { ...item, value: values[contactoCampoEdit!] }
+                : item
+            ));
+          } else {
+            // Editar todos los campos
+            setContacto(contacto.map(item =>
+              values[item.key] !== undefined
+                ? { ...item, value: values[item.key] }
+                : item
+            ));
+          }
+          setContactoModalOpen(false);
+          setContactoCampoEdit(null);
+        }}
+        initialValues={
+          contactoCampoEdit
+            ? { [contactoCampoEdit]: contacto.find(item => item.key === contactoCampoEdit)?.value }
+            : contacto.reduce((acc, item) => ({ ...acc, [item.key]: item.value }), {})
+        }
+        fields={
+          contactoCampoEdit
+            ? [contactoFields.find(f => f.name === contactoCampoEdit)!]
+            : contactoFields
+        }
+        image={null}
+        setImage={() => { }}
+        beforeUpload={() => false}
+        isMobile={isMobile}
+        adminStyles={adminStyles}
+        isEdit={true}
+        title={
+          contactoCampoEdit
+            ? `Editar ${contactoFields.find(f => f.name === contactoCampoEdit)?.label || ""}`
+            : "Editar contacto"
+        }
+        categories={[]}
+      />
+
+      <ItemModal
+        open={nosotrosModalOpen}
+        onCancel={() => {
+          setNosotrosModalOpen(false);
+          setNosotrosCampoEdit(null);
+        }}
+        onFinish={values => {
+          setNosotros(nosotros.map(item =>
+            item.key === nosotrosCampoEdit
+              ? { ...item, value: values[nosotrosCampoEdit!] }
+              : item
+          ));
+          setNosotrosModalOpen(false);
+          setNosotrosCampoEdit(null);
+        }}
+        initialValues={
+          nosotrosCampoEdit
+            ? { [nosotrosCampoEdit]: nosotros.find(item => item.key === nosotrosCampoEdit)?.value }
+            : {}
+        }
+        fields={
+          nosotrosCampoEdit
+            ? [{
+              type: "input",
+              name: nosotrosCampoEdit,
+              label: nosotros.find(item => item.key === nosotrosCampoEdit)?.label || "",
+              rules: [{ required: true, message: "Ingrese el párrafo" }]
+            }]
+            : []
+        }
+        image={null}
+        setImage={() => { }}
+        beforeUpload={() => false}
+        isMobile={isMobile}
+        adminStyles={adminStyles}
+        isEdit={true}
+        title={
+          nosotrosCampoEdit
+            ? `Editar ${nosotros.find(item => item.key === nosotrosCampoEdit)?.label || ""}`
+            : "Agregar párrafo"
+        }
+        categories={[]}
+      />
+
+       <ItemModal
+          open={nosotrosImageModalOpen}
+          onCancel={() => setNosotrosImageModalOpen(false)}
+          onFinish={() => setNosotrosImageModalOpen(false)}
+          initialValues={{}}
+          fields={[]} // No campos, solo imagen
+          image={nosotrosImage}
+          setImage={setNosotrosImage}
+          beforeUpload={() => false}
+          isMobile={isMobile}
+          adminStyles={adminStyles}
+          isEdit={true}
+          title="Editar imagen de Nosotros"
+          categories={[]}
+        />
+
+      <DeleteModal
         open={!!catDelete}
         title="¿Eliminar categoría?"
+        message={catDelete ? `¿Seguro que quieres eliminar la categoría "${catDelete.nombre}"?` : ""}
         onCancel={() => setCatDelete(null)}
-        footer={[
-          <Button key="cancel" onClick={() => setCatDelete(null)}>
-            Cancelar
-          </Button>,
-          <Button
-            key="delete"
-            type="primary"
-            danger
-            onClick={() => {
-              if (catDelete) handleCatDelete(catDelete.key)
-              setCatDelete(null)
-            }}
-          >
-            Eliminar
-          </Button>,
-        ]}
-      >
-        {catDelete && <p>¿Seguro que quieres eliminar la categoría "{catDelete.nombre}"?</p>}
-      </Modal>
+        onDelete={() => {
+          if (catDelete) handleCatDelete(catDelete.key);
+          setCatDelete(null);
+        }}
+      />
 
-      <Modal
-        centered
+      <DeleteModal
         open={!!prodDelete}
         title="¿Eliminar producto?"
+        message={prodDelete ? `¿Seguro que quieres eliminar el producto "${prodDelete.nombre}"?` : ""}
         onCancel={() => setProdDelete(null)}
-        footer={[
-          <Button key="cancel" onClick={() => setProdDelete(null)}>
-            Cancelar
-          </Button>,
-          <Button
-            key="delete"
-            type="primary"
-            danger
-            onClick={() => {
-              if (prodDelete) handleProdDelete(prodDelete.key)
-              setProdDelete(null)
-            }}
-          >
-            Eliminar
-          </Button>,
-        ]}
-      >
-        {prodDelete && <p>¿Seguro que quieres eliminar el producto "{prodDelete.nombre}"?</p>}
-      </Modal>
+        onDelete={() => {
+          if (prodDelete) handleProdDelete(prodDelete.key);
+          setProdDelete(null);
+        }}
+      />
     </div>
-  )
+  );
 }

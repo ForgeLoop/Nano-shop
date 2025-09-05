@@ -4,6 +4,7 @@ import { useIsMobile } from "../hooks/useWindowSize"
 import { Space } from "antd"
 import { nosotrosStyles } from "./pages.styles"
 import { ClockCircleOutlined, EnvironmentOutlined, MailOutlined } from "@ant-design/icons"
+import { initialContacto } from "../components/admin/admin.constants";
 
 const { Paragraph } = Typography
 
@@ -24,24 +25,32 @@ const Contacto: React.FC = () => {
                     />
                 </div>
                 <Space direction="vertical" size="large" style={{ width: "100%", paddingBottom: "32px" }}>
-                    <Space align="start" style={nosotrosStyles.contactoDescription(isMobile)}>
-                        <div>
-                            <div> <EnvironmentOutlined style={{ color: "#60a5fa" }} /> Roque Saenz Peña 157</div>
-                            <div>Villa Carlos Paz, Córdoba, Argentina</div>
-                        </div>
-                    </Space>
-                    <Space align="start" style={nosotrosStyles.contactoDescription(isMobile)}>
-
-                        <div>
-                            <div> <ClockCircleOutlined style={{ color: "#60a5fa" }} /> Lunes a Sabado de:</div>
-                            <div>9:00 - 13:00 </div>
-                            <div style={{ fontSize: "14px" }}>y de</div>
-                            <div>16:30 - 20:30</div>
-                        </div>
-                    </Space>
-                    <Space style={nosotrosStyles.contactoDescription(isMobile)}>
-                        <span> <MailOutlined style={{ color: "#60a5fa" }} /> nanoshop.it@gmail.com</span>
-                    </Space>
+                    {initialContacto.filter(item => item.key !== "mapa").map(item => (
+                        <Space
+                            key={item.key}
+                            align="start"
+                            style={nosotrosStyles.contactoDescription(isMobile)}
+                        >
+                            {item.key === "direccion" || item.key === "ciudad" ? (
+                                <div>
+                                    <div>
+                                        <EnvironmentOutlined style={{ color: "#60a5fa" }} /> {initialContacto.find(i => i.key === "direccion")?.value}
+                                    </div>
+                                    <div>{initialContacto.find(i => i.key === "ciudad")?.value}</div>
+                                </div>
+                            ) : item.key === "horario" ? (
+                                <div>
+                                    <div>
+                                        <ClockCircleOutlined style={{ color: "#60a5fa" }} /> {item.value}
+                                    </div>
+                                </div>
+                            ) : item.key === "email" ? (
+                                <span>
+                                    <MailOutlined style={{ color: "#60a5fa" }} /> {item.value}
+                                </span>
+                            ) : null}
+                        </Space>
+                    ))}
                 </Space>
 
                 <iframe
