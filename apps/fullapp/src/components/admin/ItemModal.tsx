@@ -1,5 +1,6 @@
 import { Modal, Form, Input, Button, Upload, Select, Image } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import React, { useEffect } from "react";
 
 // Define el tipo para los campos del formulario
 export type Field = {
@@ -45,6 +46,13 @@ export function ItemModal({
 }: ItemModalProps) {
   // Solo muestra el campo de imagen si existe en fields
   const showImageField = fields.some((f) => f.name === "imagen");
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (open) {
+      form.resetFields();
+    }
+  }, [open, initialValues, form]);
 
   return (
     <Modal
@@ -97,29 +105,33 @@ export function ItemModal({
             }
             return null;
           })}
-          <Form.Item style={{ textAlign: "center" }}>
-            <div style={{ width: "100%", textAlign: "center", fontWeight: 500, marginBottom: 8 }}>
-              Imagen
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <Upload
-                showUploadList={false}
-                beforeUpload={(file) => beforeUpload(file, setImage)}
-                accept="image/*"
-              >
-                <Button icon={<UploadOutlined />}>Seleccionar imagen</Button>
-              </Upload>
-              {image && (
-                <div style={{ marginTop: 12 }}>
-                  <Image
-                    src={image || "/placeholder.svg"}
-                    alt="preview"
-                    style={adminStyles.formAddImage}
-                  />
-                </div>
-              )}
-            </div>
-          </Form.Item>
+
+          {(fields.some(f => f.name === "imagen") || (fields.length === 0 && title === "Editar imagen de Nosotros")) && (
+            <Form.Item style={{ textAlign: "center" }}>
+              <div style={{ width: "100%", textAlign: "center", fontWeight: 500, marginBottom: 8 }}>
+                Imagen
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <Upload
+                  showUploadList={false}
+                  beforeUpload={(file) => beforeUpload(file, setImage)}
+                  accept="image/*"
+                >
+                  <Button icon={<UploadOutlined />}>Seleccionar imagen</Button>
+                </Upload>
+                {image && (
+                  <div style={{ marginTop: 12 }}>
+                    <Image
+                      src={image || "/placeholder.svg"}
+                      alt="preview"
+                      style={adminStyles.formAddImage}
+                    />
+                  </div>
+                )}
+              </div>
+            </Form.Item>
+          )}
+
           <Form.Item style={{ textAlign: "center" }}>
             <Button style={adminStyles.createItemButton} htmlType="submit">
               {isEdit ? "Guardar cambios" : "Crear"}

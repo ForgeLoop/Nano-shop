@@ -23,8 +23,9 @@ export const categoryFields: Field[] = [
     type: "input",
     name: "nombre",
     label: "Nombre",
-    rules: [{ required: true, message: "Ingrese el nombre" }]
-  }
+    rules: [{ required: true, message: "Ingrese el nombre" }],
+  },
+  { type: "input", name: "imagen", label: "Imagen" } 
 ];
 
 export const productFields: Field[] = [
@@ -47,7 +48,9 @@ export const productFields: Field[] = [
     label: "Precio",
     inputType: "number",
     rules: [{ required: true, message: "Ingrese el precio" }]
-  }
+  },
+  { type: "input", name: "imagen", label: "Imagen" }
+
 ];
 
 export const contactoFields: Field[] = [

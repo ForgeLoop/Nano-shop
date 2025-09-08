@@ -34,7 +34,7 @@ export default function Admin() {
   // Modales y estados
   const [catModalOpen, setCatModalOpen] = useState(false);
   const [catEdit, setCatEdit] = useState<Category | null>(null);
-  const [catImage, setCatImage] = useState("");
+  const [ catImage, setCatImage] = useState("");
   const [prodModalOpen, setProdModalOpen] = useState(false);
   const [prodEdit, setProdEdit] = useState<Product | null>(null);
   const [prodImage, setProdImage] = useState("");
@@ -46,6 +46,7 @@ export default function Admin() {
   const [nosotrosCampoEdit, setNosotrosCampoEdit] = useState<string | null>(null);
   const [nosotrosImage, setNosotrosImage] = useState<string>("/local.jpeg");
   const [nosotrosImageModalOpen, setNosotrosImageModalOpen] = useState(false);
+  const [nuevoParrafoKey, setNuevoParrafoKey] = useState<string | null>(null);
 
 
   // Imagen Upload
@@ -377,7 +378,8 @@ export default function Admin() {
         </Content>
 
         {/* Mobile Floating Action Button */}
-        {isMobile && (option === "categorias" || option === "productos") && (
+
+        {isMobile && (option === "categorias" || option === "productos" || option === "nosotros") && (
           <FloatButton
             icon={<PlusOutlined />}
             type="primary"
@@ -387,10 +389,15 @@ export default function Admin() {
                 setCatEdit(null);
                 setCatModalOpen(true);
                 setCatImage("");
-              } else {
+              } else if (option === "productos") {
                 setProdEdit(null);
                 setProdModalOpen(true);
                 setProdImage("");
+              } else if (option === "nosotros") {
+                const nuevoKey = `parrafo${nosotros.length + 1}`;
+                setNuevoParrafoKey(nuevoKey);
+                setNosotrosCampoEdit(nuevoKey);
+                setNosotrosModalOpen(true);
               }
             }}
           />
@@ -531,21 +538,58 @@ export default function Admin() {
         categories={[]}
       />
 
-       <ItemModal
-          open={nosotrosImageModalOpen}
-          onCancel={() => setNosotrosImageModalOpen(false)}
-          onFinish={() => setNosotrosImageModalOpen(false)}
-          initialValues={{}}
-          fields={[]} // No campos, solo imagen
-          image={nosotrosImage}
-          setImage={setNosotrosImage}
-          beforeUpload={() => false}
-          isMobile={isMobile}
-          adminStyles={adminStyles}
-          isEdit={true}
-          title="Editar imagen de Nosotros"
-          categories={[]}
-        />
+      <ItemModal
+        open={nosotrosModalOpen}
+        onCancel={() => {
+          setNosotrosModalOpen(false);
+          setNosotrosCampoEdit(null);
+          setNuevoParrafoKey(null);
+        }}
+        onFinish={values => {
+          if (nuevoParrafoKey) {
+            setNosotros([
+              ...nosotros,
+              { key: nuevoParrafoKey, label: `Párrafo ${nosotros.length + 1}`, value: values[nuevoParrafoKey] }
+            ]);
+          } else {
+            setNosotros(nosotros.map(item =>
+              item.key === nosotrosCampoEdit
+                ? { ...item, value: values[nosotrosCampoEdit!] }
+                : item
+            ));
+          }
+          setNosotrosModalOpen(false);
+          setNosotrosCampoEdit(null);
+          setNuevoParrafoKey(null);
+        }}
+        initialValues={
+          nosotrosCampoEdit
+            ? { [nosotrosCampoEdit]: nosotros.find(item => item.key === nosotrosCampoEdit)?.value || "" }
+            : {}
+        }
+        fields={
+          nosotrosCampoEdit
+            ? [{
+              type: "input",
+              name: nosotrosCampoEdit,
+              label: `Párrafo ${nosotrosCampoEdit.replace("parrafo", "")}`,
+              rules: [{ required: true, message: "Ingrese el párrafo" }]
+            }]
+            : []
+        }
+        image={null}
+        setImage={() => { }}
+        beforeUpload={() => false}
+        isMobile={isMobile}
+        adminStyles={adminStyles}
+        isEdit={true}
+        title={
+          nuevoParrafoKey
+            ? "Agregar párrafo"
+            : `Editar ${nosotros.find(item => item.key === nosotrosCampoEdit)?.label || ""}`
+        }
+        categories={[]}
+      />
 
       <DeleteModal
         open={!!catDelete}
