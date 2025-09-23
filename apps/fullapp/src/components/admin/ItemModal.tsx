@@ -1,6 +1,6 @@
 import { Modal, Form, Input, Button, Upload, Select, Image } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 // Define el tipo para los campos del formulario
 export type Field = {
@@ -45,9 +45,9 @@ export function ItemModal({
   categories = [],
 }: ItemModalProps) {
   // Solo muestra el campo de imagen si existe en fields
-  const showImageField = fields.some((f) => f.name === "imagen");
+  //const showImageField = fields.some((f) => f.name === "imagen");
   const [form] = Form.useForm();
-
+ console.log(fields, "fields");
   useEffect(() => {
     if (open) {
       form.resetFields();

@@ -10,6 +10,7 @@ export const initialCategories: Category[] = [
   { key: "1", nombre: "Celulares", imagen: "" },
   { key: "2", nombre: "Auriculares", imagen: "" },
   { key: "3", nombre: "Accesorios", imagen: "" },
+  { key: "4", nombre: "Smartwatches", imagen: "" },
 ];
 
 export const initialProducts: Product[] = [

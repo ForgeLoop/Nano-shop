@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Button,
   FloatButton,
-  Image,
   Layout, Menu, message,
   Space
 } from "antd";
@@ -17,8 +16,8 @@ import { productColumns } from "@/components/admin/productColumns";
 import { DeleteModal } from "@/components/admin/DeleteModal";
 import { menuItems } from "@/components/layout/navbar/navbar.constants";
 import { ItemModal } from "@/components/admin/ItemModal";
-import { contactoFields, initialContacto, initialNosotros, nosotrosFields, NosotrosItem, categoryFields, productFields, initialCategories, initialProducts, Category, Product } from "@/components/admin/admin.constants";
-
+import { contactoFields, initialContacto, initialNosotros, NosotrosItem, categoryFields, productFields, initialProducts, Category, Product } from "@/components/admin/admin.constants";
+import axios from "axios";
 
 const { Content } = Layout;
 
@@ -26,7 +25,7 @@ export default function Admin() {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { option = "categorias" } = useParams<{ option?: string }>();
-  const [categories, setCategories] = useState(initialCategories);
+  const [categories, setCategories] = useState<Category[] | null>(null);
   const [products, setProducts] = useState(initialProducts);
   const [contacto, setContacto] = useState(initialContacto);
   const [nosotros, setNosotros] = useState<NosotrosItem[]>([...initialNosotros]);
@@ -34,7 +33,7 @@ export default function Admin() {
   // Modales y estados
   const [catModalOpen, setCatModalOpen] = useState(false);
   const [catEdit, setCatEdit] = useState<Category | null>(null);
-  const [ catImage, setCatImage] = useState("");
+  const [catImage, setCatImage] = useState("");
   const [prodModalOpen, setProdModalOpen] = useState(false);
   const [prodEdit, setProdEdit] = useState<Product | null>(null);
   const [prodImage, setProdImage] = useState("");
@@ -47,6 +46,29 @@ export default function Admin() {
   const [nosotrosImage, setNosotrosImage] = useState<string>("/local.jpeg");
   const [nosotrosImageModalOpen, setNosotrosImageModalOpen] = useState(false);
   const [nuevoParrafoKey, setNuevoParrafoKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    console.log("Intentando traer categorías...");
+    axios.get("http://localhost:4000/api/categories")
+      .then(res => {
+        console.log("Categorías recibidas:", res.data);
+
+        // ✅ Mapea del formato del backend al formato del frontend
+        const backendCategories = res.data.data.categories;
+        const mappedCategories = backendCategories.map((cat: any) => ({
+          key: cat.id.toString(),
+          nombre: cat.name,
+          imagen: cat.image || ""
+        }));
+
+        setCategories(mappedCategories);
+      })
+      .catch((error) => {
+        console.log("Error al traer categorías:", error);
+        setCategories([]);
+        message.error("Error al cargar categorías");
+      });
+  }, []);
 
 
   // Imagen Upload
@@ -66,15 +88,18 @@ export default function Admin() {
   const handleCatSave = (values: { nombre: string }) => {
     const imagen = catImage;
     if (catEdit) {
-      setCategories(categories.map((c) => (c.key === catEdit.key ? { ...c, nombre: values.nombre, imagen } : c)));
+      setCategories(prev => prev ? prev.map((c) => (c.key === catEdit.key ? { ...c, nombre: values.nombre, imagen } : c)) : []);
     } else {
-      setCategories([...categories, { key: Date.now().toString(), nombre: values.nombre, imagen }]);
+      setCategories(prev => prev ? [...prev, { key: Date.now().toString(), nombre: values.nombre, imagen }] : [{ key: Date.now().toString(), nombre: values.nombre, imagen }]);
     }
     setCatModalOpen(false);
     setCatEdit(null);
     setCatImage("");
   };
-  const handleCatDelete = (key: string) => setCategories(categories.filter((c) => c.key !== key));
+
+  const handleCatDelete = (key: string) => {
+    setCategories(prev => prev ? prev.filter((c) => c.key !== key) : []);
+  };
 
   // Productos
   const handleProdSave = (values: { nombre: string; categoria: string; precio: number }) => {
@@ -90,10 +115,10 @@ export default function Admin() {
   };
   const handleProdDelete = (key: string) => setProducts(products.filter((p) => p.key !== key));
 
-  const handleContactoSave = (values) => {
-    setContacto(values);
-    setContactoModalOpen(false);
-  };
+  // const handleContactoSave = (values) => {
+  //   setContacto(values);
+  //   setContactoModalOpen(false);
+  // };
 
   const handleAgregarParrafo = () => {
     const nuevoKey = `parrafo${nosotros.length + 1}`;
@@ -112,48 +137,56 @@ export default function Admin() {
   // --- Render contenido ---
   let content;
   if (option === "categorias") {
-    content = isMobile
-      ? (
-        <RenderMobileList
-          title="Categorías"
-          items={categories}
-          getTitle={cat => cat.nombre}
-          getDescription={null}
-          getPrice={null}
-          getImage={cat => cat.imagen}
-          defaultIcon={<TagsOutlined style={adminStyles.iconItem} />}
-          onEdit={cat => {
-            setCatEdit(cat);
-            setCatModalOpen(true);
-            setCatImage(cat.imagen || "");
-          }}
-          onDelete={cat => setCatDelete(cat)}
-          adminStyles={adminStyles}
-        />
-      )
-      : (
-        <RenderDesktopList
-          title="Categorías"
-          items={categories}
-          columns={() => categoryColumns(
-            cat => {
+    if (categories === null) {
+      content = (
+        <div style={{ padding: isMobile ? "16px" : "32px", textAlign: "center" }}>
+          <p>Cargando categorías...</p>
+        </div>
+      );
+    } else {
+      content = isMobile
+        ? (
+          <RenderMobileList
+            title="Categorías"
+            items={categories} // ✅ Ahora categories es Category[], no null
+            getTitle={cat => cat.nombre}
+            getDescription={null}
+            getPrice={null}
+            getImage={cat => cat.imagen}
+            defaultIcon={<TagsOutlined style={adminStyles.iconItem} />}
+            onEdit={cat => {
               setCatEdit(cat);
               setCatModalOpen(true);
-              setCatImage(cat?.imagen || "");
-            },
-            cat => setCatDelete(cat),
-            adminStyles
-          )}
-          onEdit={cat => {
-            setCatEdit(cat);
-            setCatModalOpen(true);
-            setCatImage(cat?.imagen || "");
-          }}
-          onDelete={cat => setCatDelete(cat)}
-          adminStyles={adminStyles}
-          createButtonText="Crear nueva categoría"
-        />
-      );
+              setCatImage(cat.imagen || "");
+            }}
+            onDelete={cat => setCatDelete(cat)}
+            adminStyles={adminStyles}
+          />
+        )
+        : (
+          <RenderDesktopList
+            title="Categorías"
+            items={categories}
+            columns={() => categoryColumns(
+              cat => {
+                setCatEdit(cat);
+                setCatModalOpen(true);
+                setCatImage(cat?.imagen || "");
+              },
+              cat => setCatDelete(cat),
+              adminStyles
+            )}
+            onEdit={() => {
+              setCatEdit(null);
+              setCatModalOpen(true);
+              setCatImage("");
+            }}
+            onDelete={() => { }}
+            adminStyles={adminStyles}
+            createButtonText="Crear nueva categoría"
+          />
+        );
+    }
   } else if (option === "productos") {
     content = isMobile
       ? (
@@ -241,6 +274,7 @@ export default function Admin() {
             setContactoCampoEdit(null); // Editar todos los campos
             setContactoModalOpen(true);
           }}
+          onDelete={() => { }}
           adminStyles={adminStyles}
           createButtonText="Editar contacto"
         />
@@ -297,7 +331,7 @@ export default function Admin() {
         <RenderDesktopList
           title="Nosotros"
           items={nosotros}
-          columns={({ onEdit, onDelete, adminStyles }) => [
+          columns={() => [
             { title: "Campo", dataIndex: "label", key: "label" },
             { title: "Valor", dataIndex: "value", key: "value" },
             {
@@ -319,6 +353,7 @@ export default function Admin() {
             }
           ]}
           onEdit={() => handleAgregarParrafo()}
+          onDelete={() => { }}
           adminStyles={adminStyles}
           createButtonText="Agregar párrafo"
           imagePreview={
@@ -422,7 +457,7 @@ export default function Admin() {
         adminStyles={adminStyles}
         isEdit={!!catEdit}
         title={catEdit ? "Editar categoría" : "Crear categoría"}
-        categories={categories}
+        categories={categories || []}
       />
 
       <ItemModal
@@ -442,7 +477,7 @@ export default function Admin() {
         adminStyles={adminStyles}
         isEdit={!!prodEdit}
         title={prodEdit ? "Editar producto" : "Crear producto"}
-        categories={categories}
+        categories={categories || []}
       />
 
       <ItemModal

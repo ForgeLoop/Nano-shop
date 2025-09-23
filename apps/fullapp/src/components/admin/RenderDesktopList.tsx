@@ -1,5 +1,5 @@
 import { EditOutlined } from "@ant-design/icons";
-import { Table, Button, Space, Typography } from "antd";
+import { Table, Button, Typography } from "antd";
 
 type RenderDesktopListProps<T> = {
     title: string;
@@ -26,6 +26,7 @@ export default function RenderDesktopList<T>({
     imagePreview,
     onEditImage,
 }: RenderDesktopListProps<T>) {
+    console.log(items, "items");
     return (
         <div style={adminStyles.menuContentContainer}>
             <Title level={3} style={adminStyles.menuTitle}>{title}</Title>
