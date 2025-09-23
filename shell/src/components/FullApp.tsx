@@ -1,11 +1,11 @@
 import { Suspense, lazy } from 'react';
 import { lightTheme } from '@/theme';
 
-const FullApp = lazy(() => import('fullapp/FullApp'));
+const App = lazy(() => import('fullapp/App'));
 
 const RemoteFullAppLoader = () => (
-  <Suspense fallback={<div>Cargando FullApp...</div>}>
-    <FullApp theme={lightTheme} />
+  <Suspense fallback={<div>Cargando App...</div>}>
+    <App theme={lightTheme} />
   </Suspense>
 );
 

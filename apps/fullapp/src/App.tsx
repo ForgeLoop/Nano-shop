@@ -8,11 +8,11 @@ import Contacto from "@/pages/Contacto";
 import Admin from "@/pages/Admin";
 // ...otros imports
 
-type FullAppProps = {
+type AppProps = {
   theme?: any; // Ajusta el tipo según tu theme
 };
 
-const FullApp: React.FC<FullAppProps> = ({ theme }) => (
+const App: React.FC<AppProps> = ({ theme }) => (
    <ConfigProvider theme={theme}>
     <Navbar />
     <Routes>
@@ -27,4 +27,4 @@ const FullApp: React.FC<FullAppProps> = ({ theme }) => (
   </ConfigProvider>
 );
 
-export default FullApp;
+export default App;

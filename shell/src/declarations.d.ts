@@ -1,1 +1,1 @@
-declare module 'fullapp/FullApp';
+declare module 'fullapp/App';

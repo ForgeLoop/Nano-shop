@@ -23,7 +23,7 @@ import { createSearchStyles, createButtonStyles, navbarStyles, searchSuffixButto
 import { useIsMobile } from '@/hooks/useWindowSize';
 import { MobileDrawer } from '@/components/layout/navbar/components/MobileDrawer';
 import { DesktopDropdown } from '@/components/layout/navbar/components/DesktopDropdown';
-import { MobileSearchDropdown } from '@/components/layout/navbar/components/MobileSearchDropdown';
+import { MobileSearchDropdown } from '@/components/layout/navbar/MobileSearchDropdown';
 import { FloatingWhatsApp } from '@/components/cart/WhatsAppButton/FloatingWhatsApp';
 import { WhatsAppLogo } from '@/assets/icons/WhatsAppLogo';
 import { LoginModal } from '@/components/login/LoginModal';
