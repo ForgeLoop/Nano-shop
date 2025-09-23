@@ -26,7 +26,7 @@ type ItemModalProps = {
   adminStyles: any;
   isEdit: boolean;
   title: string;
-  categories?: { nombre: string }[]; // Solo para productos
+  categories?: any[]; // Solo para productos
 };
 
 export function ItemModal({
@@ -47,7 +47,7 @@ export function ItemModal({
   // Solo muestra el campo de imagen si existe en fields
   //const showImageField = fields.some((f) => f.name === "imagen");
   const [form] = Form.useForm();
- console.log(fields, "fields");
+  console.log(fields, "fields");
   useEffect(() => {
     if (open) {
       form.resetFields();
@@ -95,10 +95,10 @@ export function ItemModal({
                 >
                   <Select
                     placeholder={field.placeholder}
-                    options={categories.map((cat) => ({
-                      value: cat.nombre,
-                      label: cat.nombre,
-                    }))}
+                    options={Array.isArray(categories) ? categories.map((cat) => ({
+                      value: cat.nombre || cat.name,
+                      label: cat.nombre || cat.name,
+                    })) : []}
                   />
                 </Form.Item>
               );

@@ -1,17 +1,17 @@
 import type { Field } from "@/components/admin/ItemModal";
 
-export type Category = { key: string; nombre: string; imagen: string };
+//export type Category = { key: string; nombre: string; imagen: string };
 export type Product = { key: string; nombre: string; categoria: string; precio: number; imagen: string };
 export type ContactoItem = { key: string; label: string; value: string };
 export type NosotrosItem = { key: string; label: string; value: string };
 
 // No uses "as const" en los arrays principales, así son mutables
-export const initialCategories: Category[] = [
-  { key: "1", nombre: "Celulares", imagen: "" },
-  { key: "2", nombre: "Auriculares", imagen: "" },
-  { key: "3", nombre: "Accesorios", imagen: "" },
-  { key: "4", nombre: "Smartwatches", imagen: "" },
-];
+// export const initialCategories: Category[] = [
+//   { key: "1", nombre: "Celulares", imagen: "" },
+//   { key: "2", nombre: "Auriculares", imagen: "" },
+//   { key: "3", nombre: "Accesorios", imagen: "" },
+//   { key: "4", nombre: "Smartwatches", imagen: "" },
+// ];
 
 export const initialProducts: Product[] = [
   { key: "1", nombre: "iPhone 14 Pro", categoria: "Celulares", precio: 1200, imagen: "" },

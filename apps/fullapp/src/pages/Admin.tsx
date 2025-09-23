@@ -16,16 +16,23 @@ import { productColumns } from "@/components/admin/productColumns";
 import { DeleteModal } from "@/components/admin/DeleteModal";
 import { menuItems } from "@/components/layout/navbar/navbar.constants";
 import { ItemModal } from "@/components/admin/ItemModal";
-import { contactoFields, initialContacto, initialNosotros, NosotrosItem, categoryFields, productFields, initialProducts, Category, Product } from "@/components/admin/admin.constants";
-import axios from "axios";
+import { contactoFields, initialContacto, initialNosotros, NosotrosItem, categoryFields, productFields, initialProducts, Product } from "@/components/admin/admin.constants";
+import { useCrud } from "@/hooks/useCrud";
+import { categoryService, type Category } from "@/services/categoryService";
 
 const { Content } = Layout;
 
 export default function Admin() {
+  const {data: categories, loading, error, execute:fetchCategories, isSuccess, isEmpty} = useCrud<Category[]>(categoryService.getAllCategories, {
+    initialData: [],
+    onSuccess: (data) => console.log("Categorías cargadas:", data),
+    onError: (err) => message.error("Error al cargar categorías", err),
+  }
+  );
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { option = "categorias" } = useParams<{ option?: string }>();
-  const [categories, setCategories] = useState<Category[] | null>(null);
+  //const [categories, setCategories] = useState<Category[] | null>(null);
   const [products, setProducts] = useState(initialProducts);
   const [contacto, setContacto] = useState(initialContacto);
   const [nosotros, setNosotros] = useState<NosotrosItem[]>([...initialNosotros]);
@@ -48,28 +55,28 @@ export default function Admin() {
   const [nuevoParrafoKey, setNuevoParrafoKey] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("Intentando traer categorías...");
-    axios.get("http://localhost:4000/api/categories")
-      .then(res => {
-        console.log("Categorías recibidas:", res.data);
-
-        // ✅ Mapea del formato del backend al formato del frontend
-        const backendCategories = res.data.data.categories;
-        const mappedCategories = backendCategories.map((cat: any) => ({
-          key: cat.id.toString(),
-          nombre: cat.name,
-          imagen: cat.image || ""
-        }));
-
-        setCategories(mappedCategories);
-      })
-      .catch((error) => {
-        console.log("Error al traer categorías:", error);
-        setCategories([]);
-        message.error("Error al cargar categorías");
-      });
+    fetchCategories();
   }, []);
+// console.log("Intentando traer categorías...");
+    // axios.get("http://localhost:4000/api/categories")
+    //   .then(res => {
+    //     console.log("Categorías recibidas:", res.data);
 
+    //     // ✅ Mapea del formato del backend al formato del frontend
+    //     const backendCategories = res.data.data.categories;
+    //     const mappedCategories = backendCategories.map((cat: any) => ({
+    //       key: cat.id.toString(),
+    //       nombre: cat.name,
+    //       imagen: cat.image || ""
+    //     }));
+
+    //     setCategories(mappedCategories);
+    //   })
+    //   .catch((error) => {
+    //     console.log("Error al traer categorías:", error);
+    //     setCategories([]);
+    //     message.error("Error al cargar categorías");
+    //   });
 
   // Imagen Upload
   const beforeUpload = (file: File, setImage: (url: string) => void) => {
@@ -86,19 +93,19 @@ export default function Admin() {
 
   // Categorías
   const handleCatSave = (values: { nombre: string }) => {
-    const imagen = catImage;
-    if (catEdit) {
-      setCategories(prev => prev ? prev.map((c) => (c.key === catEdit.key ? { ...c, nombre: values.nombre, imagen } : c)) : []);
-    } else {
-      setCategories(prev => prev ? [...prev, { key: Date.now().toString(), nombre: values.nombre, imagen }] : [{ key: Date.now().toString(), nombre: values.nombre, imagen }]);
-    }
-    setCatModalOpen(false);
-    setCatEdit(null);
-    setCatImage("");
+    // const imagen = catImage;
+    // if (catEdit) {
+    //   setCategories(prev => prev ? prev.map((c) => (c.key === catEdit.key ? { ...c, nombre: values.nombre, imagen } : c)) : []);
+    // } else {
+    //   setCategories(prev => prev ? [...prev, { key: Date.now().toString(), nombre: values.nombre, imagen }] : [{ key: Date.now().toString(), nombre: values.nombre, imagen }]);
+    // }
+    // setCatModalOpen(false);
+    // setCatEdit(null);
+    // setCatImage("");
   };
 
   const handleCatDelete = (key: string) => {
-    setCategories(prev => prev ? prev.filter((c) => c.key !== key) : []);
+    // setCategories(prev => prev ? prev.filter((c) => c.key !== key) : []);
   };
 
   // Productos
@@ -136,57 +143,58 @@ export default function Admin() {
   };
   // --- Render contenido ---
   let content;
-  if (option === "categorias") {
-    if (categories === null) {
-      content = (
-        <div style={{ padding: isMobile ? "16px" : "32px", textAlign: "center" }}>
-          <p>Cargando categorías...</p>
-        </div>
-      );
-    } else {
-      content = isMobile
-        ? (
-          <RenderMobileList
-            title="Categorías"
-            items={categories} // ✅ Ahora categories es Category[], no null
-            getTitle={cat => cat.nombre}
-            getDescription={null}
-            getPrice={null}
-            getImage={cat => cat.imagen}
-            defaultIcon={<TagsOutlined style={adminStyles.iconItem} />}
-            onEdit={cat => {
+ if (option === "categorias") {
+  // ✅ Cambia esta verificación:
+  if (loading || !categories || categories.length === 0) {
+    content = (
+      <div style={{ padding: isMobile ? "16px" : "32px", textAlign: "center" }}>
+        <p>{loading ? "Cargando categorías..." : "No hay categorías"}</p>
+      </div>
+    );
+  } else {
+    content = isMobile
+      ? (
+        <RenderMobileList
+          title="Categorías"
+          items={Array.isArray(categories) ? categories : []} // ✅ Asegura que sea array
+          getTitle={cat => cat.nombre}
+          getDescription={null}
+          getPrice={null}
+          getImage={cat => cat.imagen}
+          defaultIcon={<TagsOutlined style={adminStyles.iconItem} />}
+          onEdit={cat => {
+            setCatEdit(cat);
+            setCatModalOpen(true);
+            setCatImage(cat.imagen || "");
+          }}
+          onDelete={cat => setCatDelete(cat)}
+          adminStyles={adminStyles}
+        />
+      )
+      : (
+        <RenderDesktopList
+          title="Categorías"
+          items={Array.isArray(categories) ? categories : []}
+          columns={() => categoryColumns(
+            cat => {
               setCatEdit(cat);
               setCatModalOpen(true);
-              setCatImage(cat.imagen || "");
-            }}
-            onDelete={cat => setCatDelete(cat)}
-            adminStyles={adminStyles}
-          />
-        )
-        : (
-          <RenderDesktopList
-            title="Categorías"
-            items={categories}
-            columns={() => categoryColumns(
-              cat => {
-                setCatEdit(cat);
-                setCatModalOpen(true);
-                setCatImage(cat?.imagen || "");
-              },
-              cat => setCatDelete(cat),
-              adminStyles
-            )}
-            onEdit={() => {
-              setCatEdit(null);
-              setCatModalOpen(true);
-              setCatImage("");
-            }}
-            onDelete={() => { }}
-            adminStyles={adminStyles}
-            createButtonText="Crear nueva categoría"
-          />
-        );
-    }
+              setCatImage(cat?.imagen || "");
+            },
+            cat => setCatDelete(cat),
+            adminStyles
+          )}
+          onEdit={() => {
+            setCatEdit(null);
+            setCatModalOpen(true);
+            setCatImage("");
+          }}
+          onDelete={() => { }}
+          adminStyles={adminStyles}
+          createButtonText="Crear nueva categoría"
+        />
+      );
+  }
   } else if (option === "productos") {
     content = isMobile
       ? (
