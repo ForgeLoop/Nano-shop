@@ -31,7 +31,7 @@ export const productService = {
   },
 
   getProductById: async (id: string | number): Promise<Product> => {
-    const response = await apiClient.get(`/products/${id}`);
+    const response = await apiClient.get(`/api/products/${id}`);
     return response.data;
   },
 
@@ -41,7 +41,7 @@ export const productService = {
   },
 
   updateProduct: async (id: string | number, productData: Partial<Product>): Promise<Product> => {
-    const response = await apiClient.put(`/products/${id}`, productData);
+    const response = await apiClient.put(`/api/products/${id}`, productData);
     return response.data;
   },
 

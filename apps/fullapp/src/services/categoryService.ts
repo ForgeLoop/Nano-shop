@@ -3,14 +3,28 @@ import apiClient from '@/services/api';
 interface Category {
   id: string | number;
   name: string;
-  description?: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
   [key: string]: any;
 }
 
+interface ApiResponse<T> {
+  code: number;
+  message: string;
+  data: T;
+}
+
+interface CategoriesResponse {
+  categories: Category[];
+}
+
+export type { Category };
+
 export const categoryService = {
   getAllCategories: async (): Promise<Category[]> => {
-    const response = await apiClient.get('/api/categories');
-    return response.data;
+    const response = await apiClient.get<ApiResponse<CategoriesResponse>>('/api/categories');
+    return response.data.data.categories;
   },
 
   getCategoryById: async (id: string | number): Promise<Category> => {
@@ -33,5 +47,3 @@ export const categoryService = {
     return response.data;
   }
 };
-
-export type { Category };

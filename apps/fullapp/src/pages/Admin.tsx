@@ -23,7 +23,14 @@ import { categoryService, type Category } from "@/services/categoryService";
 const { Content } = Layout;
 
 export default function Admin() {
-  const {data: categories, loading, error, execute:fetchCategories, isSuccess, isEmpty} = useCrud<Category[]>(categoryService.getAllCategories, {
+  const {
+    data: categories, 
+    loading, 
+    error, 
+    execute:fetchCategories, 
+    isSuccess, 
+    isEmpty
+  } = useCrud<Category[]>(categoryService.getAllCategories, {
     initialData: [],
     onSuccess: (data) => console.log("Categorías cargadas:", data),
     onError: (err) => message.error("Error al cargar categorías", err),
