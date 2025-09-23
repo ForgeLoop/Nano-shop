@@ -4,9 +4,9 @@ import {
   CAROUSEL_IMAGES, 
   CAROUSEL_CONFIG, 
   type CarouselProps,
-} from './carousel.constants';
-import { carouselStyles, getResponsiveHeight } from './carousel.styles';
-import { useIsMobile } from '../../hooks/useWindowSize';
+} from '@/components/common/carousel/carousel.constants';
+import { carouselStyles, getResponsiveHeight } from '@/components/common/carousel/carousel.styles';
+import { useIsMobile } from '@/hooks/useWindowSize';
 
 // ==================== COMPONENT ====================
 

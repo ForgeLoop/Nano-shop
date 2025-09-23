@@ -17,17 +17,17 @@ import {
   COLORS,
   navigateTo,
   openExternalLink,
-} from './navbar.constants';
-import type { NavbarProps } from './navbar.constants';
-import { createSearchStyles, createButtonStyles, navbarStyles, searchSuffixButton } from './navbar.styles';
-import { useIsMobile } from '../../hooks/useWindowSize';
-import { MobileDrawer } from './MobileDrawer';
-import { DesktopDropdown } from './DesktopDropdown';
-import { MobileSearchDropdown } from './MobileSearchDropdown';
-import { FloatingWhatsApp } from './FloatingWhatsApp';
-import { WhatsAppLogo } from '../../assets/icons/WhatsAppLogo';
-import { LoginModal } from './LoginModal';
-import { CartItem, CartModal } from './CartModal';
+} from '@/components/layout/navbar/navbar.constants';
+import type { NavbarProps } from '@/components/layout/navbar/navbar.constants';
+import { createSearchStyles, createButtonStyles, navbarStyles, searchSuffixButton } from '@/components/layout/navbar/navbar.styles';
+import { useIsMobile } from '@/hooks/useWindowSize';
+import { MobileDrawer } from '@/components/layout/navbar/components/MobileDrawer';
+import { DesktopDropdown } from '@/components/layout/navbar/components/DesktopDropdown';
+import { MobileSearchDropdown } from '@/components/layout/navbar/components/MobileSearchDropdown';
+import { FloatingWhatsApp } from '@/components/cart/WhatsAppButton/FloatingWhatsApp';
+import { WhatsAppLogo } from '@/assets/icons/WhatsAppLogo';
+import { LoginModal } from '@/components/login/LoginModal';
+import { CartItem, CartModal } from '@/components/cart/CartModal/CartModal';
 
 const { Header } = Layout;
 const { Link } = Typography;

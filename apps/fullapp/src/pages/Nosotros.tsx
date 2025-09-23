@@ -1,9 +1,9 @@
 import type React from "react"
 import { Typography, Image } from "antd"
-import { useIsMobile } from "../hooks/useWindowSize"
+import { useIsMobile } from "@/hooks/useWindowSize"
 import { Space } from "antd"
-import { nosotrosStyles } from "./pages.styles"
-import { initialNosotros } from "../components/admin/admin.constants"
+import { nosotrosStyles } from "@/pages/pages.styles"
+import { initialNosotros } from "@/components/admin/admin.constants"
 
 const { Paragraph } = Typography
 

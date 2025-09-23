@@ -1,5 +1,5 @@
 import { CSSProperties } from 'react';
-import { CAROUSEL_COLORS } from './carousel.constants';
+import { CAROUSEL_COLORS } from '@/components/common/carousel/carousel.constants';
 
 // ==================== CAROUSEL STYLES ====================
 

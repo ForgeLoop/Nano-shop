@@ -1,7 +1,7 @@
 import React from 'react';
 import { Drawer } from 'antd';
-import { PRODUCT_CATEGORIES, navigateTo, menuItems } from './navbar.constants';
-import { mobileDrawerStyles } from './navbar.styles';
+import { PRODUCT_CATEGORIES, navigateTo, menuItems } from '@/components/layout/navbar/navbar.constants';
+import { mobileDrawerStyles } from '@/components/layout/navbar/navbar.styles';
 import { RightOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 

@@ -1,10 +1,10 @@
 import type React from "react"
 import { Typography, Image } from "antd"
-import { useIsMobile } from "../hooks/useWindowSize"
+import { useIsMobile } from "@/hooks/useWindowSize"
 import { Space } from "antd"
-import { nosotrosStyles } from "./pages.styles"
+import { nosotrosStyles } from "@/pages/pages.styles"
 import { ClockCircleOutlined, EnvironmentOutlined, MailOutlined } from "@ant-design/icons"
-import { initialContacto } from "../components/admin/admin.constants";
+import { initialContacto } from "@/components/admin/admin.constants";
 
 const { Paragraph } = Typography
 

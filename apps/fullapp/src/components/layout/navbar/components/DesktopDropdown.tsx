@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
-import { COLORS, PRODUCT_CATEGORIES, navigateTo } from './navbar.constants';
-import { createButtonStyles, desktopDropdownStyles } from './navbar.styles';
+import { COLORS, PRODUCT_CATEGORIES, navigateTo } from '@/components/layout/navbar/navbar.constants';
+import { createButtonStyles, desktopDropdownStyles } from '@/components/layout/navbar/navbar.styles';
 
 interface DesktopDropdownProps {
   onMouseEnter: (element: HTMLElement, hoverStyles: Partial<CSSStyleDeclaration>) => void;

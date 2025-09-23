@@ -1,8 +1,8 @@
 import type React from "react"
 import { Row, Col, Card, Typography } from "antd"
-import { productCategories } from "./grid.constants"
-import { useIsMobile } from "../../hooks/useWindowSize"
-import { gridStyles } from "./grid.styles"
+import { productCategories } from "@/components/common/grid/grid.constants"
+import { useIsMobile } from "@/hooks/useWindowSize"
+import { gridStyles } from "@/components/common/grid/grid.styles"
 
 const ProductCategoriesGrid: React.FC = () => {
     const isMobile = useIsMobile(768);

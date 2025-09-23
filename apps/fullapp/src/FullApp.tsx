@@ -1,23 +1,22 @@
+import { ConfigProvider } from "antd";
 import { Routes, Route } from "react-router-dom";
-import Navbar from "./components/navbar/Navbar";
-import Carousel from "./components/carousel/Carousel";
-import ProductCategoriesGrid from "./components/grid/Grid";
-import Footer from "./components/footer/Footer";
-import Nosotros from "./pages/Nosotros";
-import Contacto from "./pages/Contacto";
-import Admin from "./pages/Admin";
+import Navbar from "@/components/layout/navbar/Navbar";
+import Footer from "@/components/layout/footer/Footer";
+import Home from "@/pages/Home";
+import Nosotros from "@/pages/Nosotros";
+import Contacto from "@/pages/Contacto";
+import Admin from "@/pages/Admin";
 // ...otros imports
 
-const FullApp: React.FC = () => (
-  <>
+type FullAppProps = {
+  theme?: any; // Ajusta el tipo según tu theme
+};
+
+const FullApp: React.FC<FullAppProps> = ({ theme }) => (
+   <ConfigProvider theme={theme}>
     <Navbar />
     <Routes>
-      <Route path="/" element={
-        <>
-          <Carousel />
-          <ProductCategoriesGrid />
-        </>
-      } />
+      <Route path="/" element={<Home />} />
       <Route path="/nosotros" element={<Nosotros />} />
       <Route path="/contacto" element={<Contacto />} />
       <Route path="/admin" element={<Admin />} />
@@ -25,7 +24,7 @@ const FullApp: React.FC = () => (
       {/* ...más rutas */}
     </Routes>
     <Footer />
-  </>
+  </ConfigProvider>
 );
 
 export default FullApp;

@@ -1,5 +1,5 @@
 import { CSSProperties } from 'react';
-import { COLORS, NAVBAR_HEIGHT } from './navbar.constants';
+import { COLORS, NAVBAR_HEIGHT } from '@/components/layout/navbar/navbar.constants';
 
 // ==================== MAIN NAVBAR STYLES ====================
 

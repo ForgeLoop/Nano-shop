@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input, Button } from 'antd';
-import { mobileSearchDropdownStyles } from './navbar.styles';
+import { mobileSearchDropdownStyles } from '@/components/layout/navbar/navbar.styles';
 import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
 
 interface MobileSearchDropdownProps {

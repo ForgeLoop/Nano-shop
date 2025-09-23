@@ -1,5 +1,5 @@
 import { Button, Space, Image } from "antd";
-import type { Category } from "./admin.constants";
+import type { Category } from "@/components/admin/admin.constants";
 
 export const categoryColumns = (
   onEdit: (cat: Category) => void,

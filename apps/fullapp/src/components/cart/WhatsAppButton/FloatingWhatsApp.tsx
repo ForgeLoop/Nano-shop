@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button } from 'antd';
-import { openExternalLink } from './navbar.constants';
-import { floatingWhatsAppButton } from './navbar.styles';
-import { WhatsAppLogo } from '../../assets/icons/WhatsAppLogo';
+import { openExternalLink } from '@/components/layout/navbar/navbar.constants';
+import { floatingWhatsAppButton } from '@/components/layout/navbar/navbar.styles';
+import { WhatsAppLogo } from '@/assets/icons/WhatsAppLogo';
 
 export const FloatingWhatsApp: React.FC = () => {
   const isAdmin = window.location.pathname.startsWith("/admin");

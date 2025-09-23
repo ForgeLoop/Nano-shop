@@ -8,16 +8,16 @@ import {
 } from "antd";
 import { EditOutlined, PlusOutlined, ShoppingOutlined, TagsOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
-import { useIsMobile } from "../hooks/useWindowSize";
-import { adminStyles } from "./pages.styles";
-import RenderMobileList from "../components/admin/RenderMobileList";
-import RenderDesktopList from "../components/admin/RenderDesktopList";
-import { categoryColumns } from "../components/admin/categoryColums";
-import { productColumns } from "../components/admin/productColumns";
-import { DeleteModal } from "../components/admin/DeleteModal";
-import { menuItems } from "../components/navbar/navbar.constants";
-import { ItemModal } from "../components/admin/ItemModal";
-import { contactoFields, initialContacto, initialNosotros, nosotrosFields, NosotrosItem, categoryFields, productFields, initialCategories, initialProducts, Category, Product } from "../components/admin/admin.constants";
+import { useIsMobile } from "@/hooks/useWindowSize";
+import { adminStyles } from "@/pages/pages.styles";
+import RenderMobileList from "@/components/admin/RenderMobileList";
+import RenderDesktopList from "@/components/admin/RenderDesktopList";
+import { categoryColumns } from "@/components/admin/categoryColums";
+import { productColumns } from "@/components/admin/productColumns";
+import { DeleteModal } from "@/components/admin/DeleteModal";
+import { menuItems } from "@/components/layout/navbar/navbar.constants";
+import { ItemModal } from "@/components/admin/ItemModal";
+import { contactoFields, initialContacto, initialNosotros, nosotrosFields, NosotrosItem, categoryFields, productFields, initialCategories, initialProducts, Category, Product } from "@/components/admin/admin.constants";
 
 
 const { Content } = Layout;

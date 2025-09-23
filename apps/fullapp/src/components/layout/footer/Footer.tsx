@@ -10,10 +10,10 @@ import {
     MailOutlined,
     CloseOutlined,
 } from "@ant-design/icons"
-import { useIsMobile } from "../../hooks/useWindowSize"
-import { footerStyles } from "./footer.styles"
+import { useIsMobile } from "@/hooks/useWindowSize"
+import { footerStyles } from "@/components/layout/footer/footer.styles"
 import { Image } from "antd"
-import { initialContacto } from "../admin/admin.constants";
+import { initialContacto } from "@/components/admin/admin.constants";
 
 const { Title, Text, Link } = Typography
 
