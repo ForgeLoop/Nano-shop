@@ -1,413 +1,375 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense, useMemo } from "react";
 import {
-  Button,
-  FloatButton,
-  Layout, Menu, message,
-  Space
+  Layout, 
+  Menu,
+  Progress,
 } from "antd";
-import { EditOutlined, PlusOutlined, ShoppingOutlined, TagsOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { useIsMobile } from "@/hooks/useWindowSize";
 import { adminStyles } from "@/pages/pages.styles";
-import RenderMobileList from "@/components/admin/RenderMobileList";
-import RenderDesktopList from "@/components/admin/RenderDesktopList";
-import { categoryColumns } from "@/components/admin/categoryColums";
-import { productColumns } from "@/components/admin/productColumns";
-import { DeleteModal } from "@/components/admin/DeleteModal";
+import { DeleteModal } from "@/components/admin/shared/DeleteModal";
 import { menuItems } from "@/components/layout/navbar/navbar.constants";
-import { ItemModal } from "@/components/admin/ItemModal";
-import { contactoFields, initialContacto, initialNosotros, NosotrosItem, categoryFields, productFields, initialProducts, Product } from "@/components/admin/admin.constants";
 import { useCrud } from "@/hooks/useCrud";
-import { categoryService, type Category } from "@/services/categoryService";
+import CategoryList from "@/components/admin/categories/CategoryList";
+import ProductsList from "@/components/admin/products/ProductsList";
+import { Category, categoryService } from "@/services/categoryService";
+import { Product, productService } from "@/services/productService";
+import CreateUpdateCategoryModal from "@/components/admin/categories/modals/CreateUpdateCategoryModal";
+import CreateUpdateProductModal from "@/components/admin/products/modals/CreateUpdateProductModal";
 
 const { Content } = Layout;
 
 export default function Admin() {
-  const {
-    data: categories, 
-    loading, 
-    error, 
-    execute:fetchCategories, 
-    isSuccess, 
-    isEmpty
-  } = useCrud<Category[]>(categoryService.getAllCategories, {
-    initialData: [],
-    onSuccess: (data) => console.log("Categorías cargadas:", data),
-    onError: (err) => message.error("Error al cargar categorías", err),
-  }
-  );
+  // Categories
+  const { data: categories, loading: getCategoriesLoading, execute:fetchCategories} = useCrud<Category[]>(categoryService.getAllCategories);
+  const { data: category, loading: getCategoryLoading, execute: fetchCategory } = useCrud<Category | null>(categoryService.getCategoryById);
+  const { execute: updateCategory, loading: loadingUpdateCategory } = useCrud(categoryService.updateCategory)
+  const { execute: deleteCategory, loading: loadingDeleteCategory } = useCrud(categoryService.deleteCategory)
+  const { execute: createCategory, loading: loadingCreateCategory } = useCrud(categoryService.createCategory)
+  const isLoadingCategories = useMemo(() => getCategoriesLoading || getCategoryLoading || loadingUpdateCategory || loadingDeleteCategory || loadingCreateCategory, [getCategoriesLoading, getCategoryLoading, loadingUpdateCategory, loadingDeleteCategory, loadingCreateCategory]);
+
+  // Products
+  const { data: products, loading: getProductsLoading, execute:fetchProducts} = useCrud<Product[]>(productService.getAllProducts);
+  const { data: product, loading: getProductLoading, execute: fetchProduct } = useCrud<Product | null>(productService.getProductById);
+  const { execute: updateProduct, loading: loadingUpdateProduct } = useCrud(productService.updateProduct)
+  const { execute: deleteProduct, loading: loadingDeleteProduct } = useCrud(productService.deleteProduct)
+  const { execute: createProduct, loading: loadingCreateProduct } = useCrud(productService.createProduct)
+  const isLoadingProducts = useMemo(() => getProductsLoading || getProductLoading || loadingUpdateProduct || loadingDeleteProduct || loadingCreateProduct, [getProductsLoading, getProductLoading, loadingUpdateProduct, loadingDeleteProduct, loadingCreateProduct]);
+  
   const isMobile = useIsMobile();
   const navigate = useNavigate();
-  const { option = "categorias" } = useParams<{ option?: string }>();
-  //const [categories, setCategories] = useState<Category[] | null>(null);
-  const [products, setProducts] = useState(initialProducts);
-  const [contacto, setContacto] = useState(initialContacto);
-  const [nosotros, setNosotros] = useState<NosotrosItem[]>([...initialNosotros]);
 
-  // Modales y estados
-  const [catModalOpen, setCatModalOpen] = useState(false);
-  const [catEdit, setCatEdit] = useState<Category | null>(null);
-  const [catImage, setCatImage] = useState("");
-  const [prodModalOpen, setProdModalOpen] = useState(false);
-  const [prodEdit, setProdEdit] = useState<Product | null>(null);
-  const [prodImage, setProdImage] = useState("");
-  const [catDelete, setCatDelete] = useState<Category | null>(null);
-  const [prodDelete, setProdDelete] = useState<Product | null>(null);
-  const [contactoModalOpen, setContactoModalOpen] = useState(false);
-  const [contactoCampoEdit, setContactoCampoEdit] = useState<string | null>(null);
-  const [nosotrosModalOpen, setNosotrosModalOpen] = useState(false);
-  const [nosotrosCampoEdit, setNosotrosCampoEdit] = useState<string | null>(null);
-  const [nosotrosImage, setNosotrosImage] = useState<string>("/local.jpeg");
-  const [nosotrosImageModalOpen, setNosotrosImageModalOpen] = useState(false);
-  const [nuevoParrafoKey, setNuevoParrafoKey] = useState<string | null>(null);
+  const { option = "categorias" } = useParams<{ option?: string }>();
+
+  // Configuración de las opciones del admin
+  const adminOptions = [
+    { id: "categorias", name: "Categorías", icon: "tags" },
+    { id: "productos", name: "Productos", icon: "shopping" },
+    { id: "contacto", name: "Contacto", icon: "phone" },
+    { id: "nosotros", name: "Nosotros", icon: "info" },
+  ];
+  // Obtener la opción actual
+  const currentOption = adminOptions.find(opt => opt.id === option) || adminOptions[0];
+
+  // Categories Consts
+  const [updateCategoryModal, setUpdateCategoryModal] = useState(false);
+  const [createCategoryModal, setCreateCategoryModal] = useState(false);
+  const [deleteCategoryObject, setDeleteCategoryObject] = useState<Category | null>(null);
+  const [deleteCategoryModal, setDeleteCategoryModal] = useState(false);
+
+  // Products Consts
+  const [updateProductModal, setUpdateProductModal] = useState(false);
+  const [createProductModal, setCreateProductModal] = useState(false);
+  const [deleteProductObject, setDeleteProductObject] = useState<Product | null>(null);
+  const [deleteProductModal, setDeleteProductModal] = useState(false);
 
   useEffect(() => {
+    // Cargar datos según la opción actual
+    if (currentOption.id === "categorias") {
+      fetchCategories();
+    } else if (currentOption.id === "productos") {
+      fetchProducts();
+    }
+    // Para contacto y nosotros no necesitas fetch ya que usan estado local
+  }, [currentOption.id]);
+
+  // Categories handlers
+  const handleUpdateCategory = async (id: number) => {
+    await fetchCategory(id);
+    setUpdateCategoryModal(true);
+  }
+  const confirmUpdateCategory = async (id: number | string | undefined, body: Category) => {
+    setUpdateCategoryModal(false);
+    await updateCategory(id, body);
     fetchCategories();
-  }, []);
-// console.log("Intentando traer categorías...");
-    // axios.get("http://localhost:4000/api/categories")
-    //   .then(res => {
-    //     console.log("Categorías recibidas:", res.data);
-
-    //     // ✅ Mapea del formato del backend al formato del frontend
-    //     const backendCategories = res.data.data.categories;
-    //     const mappedCategories = backendCategories.map((cat: any) => ({
-    //       key: cat.id.toString(),
-    //       nombre: cat.name,
-    //       imagen: cat.image || ""
-    //     }));
-
-    //     setCategories(mappedCategories);
-    //   })
-    //   .catch((error) => {
-    //     console.log("Error al traer categorías:", error);
-    //     setCategories([]);
-    //     message.error("Error al cargar categorías");
-    //   });
-
-  // Imagen Upload
-  const beforeUpload = (file: File, setImage: (url: string) => void) => {
-    const isImage = file.type.startsWith("image/");
-    if (!isImage) {
-      message.error("Solo se permiten imágenes.");
-      return false;
-    }
-    const reader = new FileReader();
-    reader.onload = (e) => setImage(e.target?.result as string);
-    reader.readAsDataURL(file);
-    return false;
-  };
-
-  // Categorías
-  const handleCatSave = (values: { nombre: string }) => {
-    // const imagen = catImage;
-    // if (catEdit) {
-    //   setCategories(prev => prev ? prev.map((c) => (c.key === catEdit.key ? { ...c, nombre: values.nombre, imagen } : c)) : []);
-    // } else {
-    //   setCategories(prev => prev ? [...prev, { key: Date.now().toString(), nombre: values.nombre, imagen }] : [{ key: Date.now().toString(), nombre: values.nombre, imagen }]);
-    // }
-    // setCatModalOpen(false);
-    // setCatEdit(null);
-    // setCatImage("");
-  };
-
-  const handleCatDelete = (key: string) => {
-    // setCategories(prev => prev ? prev.filter((c) => c.key !== key) : []);
-  };
-
-  // Productos
-  const handleProdSave = (values: { nombre: string; categoria: string; precio: number }) => {
-    const imagen = prodImage;
-    if (prodEdit) {
-      setProducts(products.map((p) => (p.key === prodEdit.key ? { ...p, ...values, imagen } : p)));
+  }
+  const handleDeleteCategory = async (category: Category) => {
+    setDeleteCategoryObject(category);
+    setDeleteCategoryModal(true);
+  }
+  const confirmDeleteCategory = async (id: number | string) => {
+    setDeleteCategoryModal(false);
+    await deleteCategory(id);
+    fetchCategories();
+  }
+  const handleCreateCategory = () => {
+    setCreateCategoryModal(true);
+  }
+  const confirmCreateCategory = async (body: Category) => {
+    setCreateCategoryModal(false);
+    await createCategory(body);
+    fetchCategories();
+  }
+  const handleCategorySubmit = (id: number | string | undefined, values: any) => {
+    if (id) {
+      confirmUpdateCategory(id, values);
     } else {
-      setProducts([...products, { key: Date.now().toString(), ...values, imagen }]);
+      confirmCreateCategory(values);
     }
-    setProdModalOpen(false);
-    setProdEdit(null);
-    setProdImage("");
-  };
-  const handleProdDelete = (key: string) => setProducts(products.filter((p) => p.key !== key));
+  }
 
-  // const handleContactoSave = (values) => {
-  //   setContacto(values);
-  //   setContactoModalOpen(false);
+  // Products handlers
+  const handleUpdateProduct = async (id: number) => {
+    await fetchProduct(id);
+    setUpdateProductModal(true);
+  }
+  const confirmUpdateProduct = async (id: number | string | undefined, body: Product) => {
+    setUpdateProductModal(false);
+    await updateProduct(id, body);
+    fetchProducts();
+  }
+  const handleDeleteProduct = async (product: Product) => {
+    setDeleteProductObject(product);
+    setDeleteProductModal(true);
+  }
+  const confirmDeleteProduct = async (id: number | string) => {
+    setDeleteProductModal(false);
+    await deleteProduct(id);
+    fetchProducts();
+  }
+  const handleCreateProduct = () => {
+    setCreateProductModal(true);
+  }
+  const confirmCreateProduct = async (body: Product) => {
+    setCreateProductModal(false);
+    await createProduct(body);
+    fetchProducts();
+  }
+  const handleProductSubmit = (id: number | string | undefined, values: any) => {
+    if (id) {
+      confirmUpdateProduct(id, values);
+    } else {
+      confirmCreateProduct(values);
+    }
+  }
+
+  // const handleAgregarParrafo = () => {
+  //   const nuevoKey = `parrafo${nosotros.length + 1}`;
+  //   setNosotros([
+  //     ...nosotros,
+  //     { key: nuevoKey, label: `Párrafo ${nosotros.length + 1}`, value: "" }
+  //   ]);
+  //   setNosotrosCampoEdit(nuevoKey);
+  //   setNosotrosModalOpen(true);
   // };
 
-  const handleAgregarParrafo = () => {
-    const nuevoKey = `parrafo${nosotros.length + 1}`;
-    setNosotros([
-      ...nosotros,
-      { key: nuevoKey, label: `Párrafo ${nosotros.length + 1}`, value: "" }
-    ]);
-    setNosotrosCampoEdit(nuevoKey);
-    setNosotrosModalOpen(true);
-  };
+  // // Para eliminar un párrafo
+  // const handleEliminarParrafo = (key: string) => {
+  //   setNosotros(nosotros.filter(item => item.key !== key));
+  // };
 
-  // Para eliminar un párrafo
-  const handleEliminarParrafo = (key: string) => {
-    setNosotros(nosotros.filter(item => item.key !== key));
-  };
-  // --- Render contenido ---
-  let content;
- if (option === "categorias") {
-  // ✅ Cambia esta verificación:
-  if (loading || !categories || categories.length === 0) {
-    content = (
-      <div style={{ padding: isMobile ? "16px" : "32px", textAlign: "center" }}>
-        <p>{loading ? "Cargando categorías..." : "No hay categorías"}</p>
-      </div>
-    );
-  } else {
-    content = isMobile
-      ? (
-        <RenderMobileList
-          title="Categorías"
-          items={Array.isArray(categories) ? categories : []} // ✅ Asegura que sea array
-          getTitle={cat => cat.nombre}
-          getDescription={null}
-          getPrice={null}
-          getImage={cat => cat.imagen}
-          defaultIcon={<TagsOutlined style={adminStyles.iconItem} />}
-          onEdit={cat => {
-            setCatEdit(cat);
-            setCatModalOpen(true);
-            setCatImage(cat.imagen || "");
-          }}
-          onDelete={cat => setCatDelete(cat)}
-          adminStyles={adminStyles}
-        />
-      )
-      : (
-        <RenderDesktopList
-          title="Categorías"
-          items={Array.isArray(categories) ? categories : []}
-          columns={() => categoryColumns(
-            cat => {
-              setCatEdit(cat);
-              setCatModalOpen(true);
-              setCatImage(cat?.imagen || "");
-            },
-            cat => setCatDelete(cat),
-            adminStyles
-          )}
-          onEdit={() => {
-            setCatEdit(null);
-            setCatModalOpen(true);
-            setCatImage("");
-          }}
-          onDelete={() => { }}
-          adminStyles={adminStyles}
-          createButtonText="Crear nueva categoría"
-        />
-      );
-  }
-  } else if (option === "productos") {
-    content = isMobile
-      ? (
-        <RenderMobileList
-          title="Productos"
-          items={products}
-          getTitle={prod => prod.nombre}
-          getDescription={prod => prod.categoria}
-          getPrice={prod => `$${prod.precio}`}
-          getImage={prod => prod.imagen}
-          defaultIcon={<ShoppingOutlined style={adminStyles.iconItem} />}
-          onEdit={prod => {
-            setProdEdit(prod);
-            setProdModalOpen(true);
-            setProdImage(prod.imagen || "");
-          }}
-          onDelete={prod => setProdDelete(prod)}
-          adminStyles={adminStyles}
-        />
-      )
-      : (
-        <RenderDesktopList
-          title="Productos"
-          items={products}
-          columns={() => productColumns(
-            prod => {
-              setProdEdit(prod);
-              setProdModalOpen(true);
-              setProdImage(prod?.imagen || "");
-            },
-            prod => setProdDelete(prod),
-            adminStyles
-          )}
-          onEdit={prod => {
-            setProdEdit(prod);
-            setProdModalOpen(true);
-            setProdImage(prod?.imagen || "");
-          }}
-          onDelete={prod => setProdDelete(prod)}
-          adminStyles={adminStyles}
-          createButtonText="Crear nuevo producto"
-        />
-      );
-  } else if (option === "carousel") {
-    content = (
-      <div style={{ padding: isMobile ? "16px" : "32px" }}>
-        <h3 style={adminStyles.menuTitle}>Carousel</h3>
-        <p>Gestión de imágenes del carousel (pendiente).</p>
-      </div>
-    );
-  } else if (option === "carouselMobile") {
-    content = (
-      <div style={{ padding: isMobile ? "16px" : "32px" }}>
-        <h3 style={adminStyles.menuTitle}>Carousel Mobile</h3>
-        <p>Gestión de imágenes del carousel mobile (pendiente).</p>
-      </div>
-    );
-  } else if (option === "contacto") {
-    content = isMobile
-      ? (
-        <RenderMobileList
-          title="Contacto"
-          items={contacto}
-          getTitle={item => item.label}
-          getDescription={item => item.value}
-          getPrice={null}
-          getImage={null}
-          defaultIcon={null}
-          onEdit={(item) => {
-            setContactoCampoEdit(item.key); // Editar campo individual
-            setContactoModalOpen(true);
-          }}
-          adminStyles={adminStyles}
-        />
-      )
-      : (
-        <RenderDesktopList
-          title="Contacto"
-          items={contacto}
-          columns={() => [
-            { title: "Campo", dataIndex: "label", key: "label" },
-            { title: "Valor", dataIndex: "value", key: "value" }
-          ]}
-          onEdit={() => {
-            setContactoCampoEdit(null); // Editar todos los campos
-            setContactoModalOpen(true);
-          }}
-          onDelete={() => { }}
-          adminStyles={adminStyles}
-          createButtonText="Editar contacto"
-        />
-      );
-  } else if (option === "nosotros") {
-    content = isMobile
-      ? (
-        <RenderMobileList
-          title="Nosotros"
-          items={nosotros}
-          getTitle={item => item.label}
-          getDescription={item => item.value}
-          getPrice={null}
-          getImage={null}
-          defaultIcon={null}
-          onEdit={item => {
-            setNosotrosCampoEdit(item.key);
-            setNosotrosModalOpen(true);
-          }}
-          onDelete={item => handleEliminarParrafo(item.key)}
-          adminStyles={adminStyles}
-          imagePreview={
-            <div style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginBottom: 16
-            }}>
-              <img
-                src={nosotrosImage}
-                alt="Imagen de Nosotros"
-                style={{
-                  width: 120,
-                  height: 80,
-                  objectFit: "cover",
-                  borderRadius: 8,
-                  display: "block"
-                }}
-              />
-              <Button
-                type="text"
-                size="large"
-                icon={<EditOutlined />}
-                style={{ color: "#1890ff", marginTop: 8 }}
-                onClick={() => setNosotrosImageModalOpen(true)}
-              >
-                Editar imagen
-              </Button>
-            </div>
-          }
-        />
-      )
-      : (
-        <RenderDesktopList
-          title="Nosotros"
-          items={nosotros}
-          columns={() => [
-            { title: "Campo", dataIndex: "label", key: "label" },
-            { title: "Valor", dataIndex: "value", key: "value" },
-            {
-              title: "Acciones",
-              key: "acciones",
-              render: (_: any, record: NosotrosItem) => (
-                <Space>
-                  <Button type="link" onClick={() => {
-                    setNosotrosCampoEdit(record.key);
-                    setNosotrosModalOpen(true);
-                  }}>
-                    Editar
-                  </Button>
-                  <Button type="link" danger onClick={() => handleEliminarParrafo(record.key)}>
-                    Eliminar
-                  </Button>
-                </Space>
-              ),
-            }
-          ]}
-          onEdit={() => handleAgregarParrafo()}
-          onDelete={() => { }}
-          adminStyles={adminStyles}
-          createButtonText="Agregar párrafo"
-          imagePreview={
-            <div style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginBottom: 16
-            }}>
-              <img
-                src={nosotrosImage}
-                alt="Imagen de Nosotros"
-                style={{
-                  width: 120,
-                  height: 80,
-                  objectFit: "cover",
-                  borderRadius: 8,
-                  display: "block"
-                }}
-              />
-              <Button
-                type="text"
-                size="large"
-                icon={<EditOutlined />}
-                style={{ color: "#1890ff", marginTop: 8 }}
-                onClick={() => setNosotrosImageModalOpen(true)}
-              >
-                Editar imagen
-              </Button>
-            </div>
-          }
-        />
-      );
-  }
+  const renderCurrentStep = () => {
+        switch (currentOption.id) {
+            case "categorias":
+              if (isLoadingCategories || !categories || categories.length === 0) {
+                return (
+                  <div style={{ padding: isMobile ? "16px" : "32px" }}>
+                    <Progress percent={50} status="active" showInfo={false} />
+                  </div>
+                );
+              } else {
+                return (
+                  <Suspense fallback={<Progress percent={50} status="active" showInfo={false} />}>
+                    <CategoryList 
+                      categories={categories}
+                      onEdit={handleUpdateCategory}
+                      onDelete={handleDeleteCategory}
+                      adminStyles={adminStyles}
+                      onCreate={handleCreateCategory}
+                      isMobile={isMobile}
+                    />
+                  </Suspense>
+                );
+              }
+            case "productos":
+              if (isLoadingProducts || !products || products.length === 0) {
+                return (
+                  <div style={{ padding: isMobile ? "16px" : "32px" }}>
+                    <Progress percent={50} status="active" showInfo={false} />
+                  </div>
+                );
+              } else {
+                return (
+                  <Suspense fallback={<Progress percent={50} status="active" showInfo={false} />}>
+                    <ProductsList 
+                      products={products}
+                      onEdit={handleUpdateProduct}
+                      onDelete={handleDeleteProduct}
+                      adminStyles={adminStyles}
+                      onCreate={handleCreateProduct}
+                      isMobile={isMobile}
+                    />
+                  </Suspense>
+                );
+              }
+            default:
+                return null;
+        }
+    };
+
+
+//   } else if (option === "carousel") {
+//     content = (
+//       <div style={{ padding: isMobile ? "16px" : "32px" }}>
+//         <h3 style={adminStyles.menuTitle}>Carousel</h3>
+//         <p>Gestión de imágenes del carousel (pendiente).</p>
+//       </div>
+//     );
+//   } else if (option === "carouselMobile") {
+//     content = (
+//       <div style={{ padding: isMobile ? "16px" : "32px" }}>
+//         <h3 style={adminStyles.menuTitle}>Carousel Mobile</h3>
+//         <p>Gestión de imágenes del carousel mobile (pendiente).</p>
+//       </div>
+//     );
+//   } else if (option === "contacto") {
+//     content = isMobile
+//       ? (
+//         <RenderMobileList
+//           title="Contacto"
+//           items={contacto}
+//           getTitle={item => item.label}
+//           getDescription={item => item.value}
+//           getPrice={null}
+//           getImage={null}
+//           defaultIcon={null}
+//           onEdit={(item) => {
+//             setContactoCampoEdit(item.key); // Editar campo individual
+//             setContactoModalOpen(true);
+//           }}
+//           adminStyles={adminStyles}
+//         />
+//       )
+//       : (
+//         <RenderDesktopList
+//           title="Contacto"
+//           items={contacto}
+//           columns={() => [
+//             { title: "Campo", dataIndex: "label", key: "label" },
+//             { title: "Valor", dataIndex: "value", key: "value" }
+//           ]}
+//           onEdit={() => {
+//             setContactoCampoEdit(null); // Editar todos los campos
+//             setContactoModalOpen(true);
+//           }}
+//           onDelete={() => { }}
+//           adminStyles={adminStyles}
+//           createButtonText="Editar contacto"
+//         />
+//       );
+//   } else if (option === "nosotros") {
+//     content = isMobile
+//       ? (
+//         <RenderMobileList
+//           title="Nosotros"
+//           items={nosotros}
+//           getTitle={item => item.label}
+//           getDescription={item => item.value}
+//           getPrice={null}
+//           getImage={null}
+//           defaultIcon={null}
+//           onEdit={item => {
+//             setNosotrosCampoEdit(item.key);
+//             setNosotrosModalOpen(true);
+//           }}
+//           onDelete={item => handleEliminarParrafo(item.key)}
+//           adminStyles={adminStyles}
+//           imagePreview={
+//             <div style={{
+//               display: "flex",
+//               flexDirection: "column",
+//               alignItems: "center",
+//               marginBottom: 16
+//             }}>
+//               <img
+//                 src={nosotrosImage}
+//                 alt="Imagen de Nosotros"
+//                 style={{
+//                   width: 120,
+//                   height: 80,
+//                   objectFit: "cover",
+//                   borderRadius: 8,
+//                   display: "block"
+//                 }}
+//               />
+//               <Button
+//                 type="text"
+//                 size="large"
+//                 icon={<EditOutlined />}
+//                 style={{ color: "#1890ff", marginTop: 8 }}
+//                 onClick={() => setNosotrosImageModalOpen(true)}
+//               >
+//                 Editar imagen
+//               </Button>
+//             </div>
+//           }
+//         />
+//       )
+//       : (
+//         <RenderDesktopList
+//           title="Nosotros"
+//           items={nosotros}
+//           columns={() => [
+//             { title: "Campo", dataIndex: "label", key: "label" },
+//             { title: "Valor", dataIndex: "value", key: "value" },
+//             {
+//               title: "Acciones",
+//               key: "acciones",
+//               render: (_: any, record: NosotrosItem) => (
+//                 <Space>
+//                   <Button type="link" onClick={() => {
+//                     setNosotrosCampoEdit(record.key);
+//                     setNosotrosModalOpen(true);
+//                   }}>
+//                     Editar
+//                   </Button>
+//                   <Button type="link" danger onClick={() => handleEliminarParrafo(record.key)}>
+//                     Eliminar
+//                   </Button>
+//                 </Space>
+//               ),
+//             }
+//           ]}
+//           onEdit={() => handleAgregarParrafo()}
+//           onDelete={() => { }}
+//           adminStyles={adminStyles}
+//           createButtonText="Agregar párrafo"
+//           imagePreview={
+//             <div style={{
+//               display: "flex",
+//               flexDirection: "column",
+//               alignItems: "center",
+//               marginBottom: 16
+//             }}>
+//               <img
+//                 src={nosotrosImage}
+//                 alt="Imagen de Nosotros"
+//                 style={{
+//                   width: 120,
+//                   height: 80,
+//                   objectFit: "cover",
+//                   borderRadius: 8,
+//                   display: "block"
+//                 }}
+//               />
+//               <Button
+//                 type="text"
+//                 size="large"
+//                 icon={<EditOutlined />}
+//                 style={{ color: "#1890ff", marginTop: 8 }}
+//                 onClick={() => setNosotrosImageModalOpen(true)}
+//               >
+//                 Editar imagen
+//               </Button>
+//             </div>
+//           }
+//         />
+//       );
+//   }
 
   return (
     <div style={adminStyles.container}>
       <Layout style={adminStyles.layout(isMobile)}>
-        {/* Desktop Sidebar */}
         {!isMobile && (
           <Layout.Sider width={220} style={{ background: "#222" }}>
             <Menu
@@ -422,14 +384,13 @@ export default function Admin() {
             />
           </Layout.Sider>
         )}
-
         <Content style={adminStyles.contentContainer(isMobile)}>
-          {content}
+          {renderCurrentStep()}
         </Content>
 
         {/* Mobile Floating Action Button */}
 
-        {isMobile && (option === "categorias" || option === "productos" || option === "nosotros") && (
+        {/* {isMobile && (option === "categorias" || option === "productos" || option === "nosotros") && (
           <FloatButton
             icon={<PlusOutlined />}
             type="primary"
@@ -451,217 +412,83 @@ export default function Admin() {
               }
             }}
           />
-        )}
+        )} */}
       </Layout>
-
       {/* Modales */}
-      <ItemModal
-        open={catModalOpen}
-        onCancel={() => {
-          setCatModalOpen(false);
-          setCatEdit(null);
-          setCatImage("");
-        }}
-        onFinish={handleCatSave}
-        initialValues={catEdit || { nombre: "" }}
-        fields={categoryFields}
-        image={catImage}
-        setImage={setCatImage}
-        beforeUpload={beforeUpload}
-        isMobile={isMobile}
-        adminStyles={adminStyles}
-        isEdit={!!catEdit}
-        title={catEdit ? "Editar categoría" : "Crear categoría"}
-        categories={categories || []}
-      />
-
-      <ItemModal
-        open={prodModalOpen}
-        onCancel={() => {
-          setProdModalOpen(false);
-          setProdEdit(null);
-          setProdImage("");
-        }}
-        onFinish={handleProdSave}
-        initialValues={prodEdit || { nombre: "", categoria: "", precio: "" }}
-        fields={productFields}
-        image={prodImage}
-        setImage={setProdImage}
-        beforeUpload={beforeUpload}
-        isMobile={isMobile}
-        adminStyles={adminStyles}
-        isEdit={!!prodEdit}
-        title={prodEdit ? "Editar producto" : "Crear producto"}
-        categories={categories || []}
-      />
-
-      <ItemModal
-        open={contactoModalOpen}
-        onCancel={() => {
-          setContactoModalOpen(false);
-          setContactoCampoEdit(null);
-        }}
-        onFinish={(values) => {
-          if (contactoCampoEdit) {
-            // Editar solo un campo
-            setContacto(contacto.map(item =>
-              item.key === contactoCampoEdit
-                ? { ...item, value: values[contactoCampoEdit!] }
-                : item
-            ));
-          } else {
-            // Editar todos los campos
-            setContacto(contacto.map(item =>
-              values[item.key] !== undefined
-                ? { ...item, value: values[item.key] }
-                : item
-            ));
-          }
-          setContactoModalOpen(false);
-          setContactoCampoEdit(null);
-        }}
-        initialValues={
-          contactoCampoEdit
-            ? { [contactoCampoEdit]: contacto.find(item => item.key === contactoCampoEdit)?.value }
-            : contacto.reduce((acc, item) => ({ ...acc, [item.key]: item.value }), {})
-        }
-        fields={
-          contactoCampoEdit
-            ? [contactoFields.find(f => f.name === contactoCampoEdit)!]
-            : contactoFields
-        }
-        image={null}
-        setImage={() => { }}
-        beforeUpload={() => false}
-        isMobile={isMobile}
-        adminStyles={adminStyles}
-        isEdit={true}
-        title={
-          contactoCampoEdit
-            ? `Editar ${contactoFields.find(f => f.name === contactoCampoEdit)?.label || ""}`
-            : "Editar contacto"
-        }
-        categories={[]}
-      />
-
-      <ItemModal
-        open={nosotrosModalOpen}
-        onCancel={() => {
-          setNosotrosModalOpen(false);
-          setNosotrosCampoEdit(null);
-        }}
-        onFinish={values => {
-          setNosotros(nosotros.map(item =>
-            item.key === nosotrosCampoEdit
-              ? { ...item, value: values[nosotrosCampoEdit!] }
-              : item
-          ));
-          setNosotrosModalOpen(false);
-          setNosotrosCampoEdit(null);
-        }}
-        initialValues={
-          nosotrosCampoEdit
-            ? { [nosotrosCampoEdit]: nosotros.find(item => item.key === nosotrosCampoEdit)?.value }
-            : {}
-        }
-        fields={
-          nosotrosCampoEdit
-            ? [{
-              type: "input",
-              name: nosotrosCampoEdit,
-              label: nosotros.find(item => item.key === nosotrosCampoEdit)?.label || "",
-              rules: [{ required: true, message: "Ingrese el párrafo" }]
-            }]
-            : []
-        }
-        image={null}
-        setImage={() => { }}
-        beforeUpload={() => false}
-        isMobile={isMobile}
-        adminStyles={adminStyles}
-        isEdit={true}
-        title={
-          nosotrosCampoEdit
-            ? `Editar ${nosotros.find(item => item.key === nosotrosCampoEdit)?.label || ""}`
-            : "Agregar párrafo"
-        }
-        categories={[]}
-      />
-
-      <ItemModal
-        open={nosotrosModalOpen}
-        onCancel={() => {
-          setNosotrosModalOpen(false);
-          setNosotrosCampoEdit(null);
-          setNuevoParrafoKey(null);
-        }}
-        onFinish={values => {
-          if (nuevoParrafoKey) {
-            setNosotros([
-              ...nosotros,
-              { key: nuevoParrafoKey, label: `Párrafo ${nosotros.length + 1}`, value: values[nuevoParrafoKey] }
-            ]);
-          } else {
-            setNosotros(nosotros.map(item =>
-              item.key === nosotrosCampoEdit
-                ? { ...item, value: values[nosotrosCampoEdit!] }
-                : item
-            ));
-          }
-          setNosotrosModalOpen(false);
-          setNosotrosCampoEdit(null);
-          setNuevoParrafoKey(null);
-        }}
-        initialValues={
-          nosotrosCampoEdit
-            ? { [nosotrosCampoEdit]: nosotros.find(item => item.key === nosotrosCampoEdit)?.value || "" }
-            : {}
-        }
-        fields={
-          nosotrosCampoEdit
-            ? [{
-              type: "input",
-              name: nosotrosCampoEdit,
-              label: `Párrafo ${nosotrosCampoEdit.replace("parrafo", "")}`,
-              rules: [{ required: true, message: "Ingrese el párrafo" }]
-            }]
-            : []
-        }
-        image={null}
-        setImage={() => { }}
-        beforeUpload={() => false}
-        isMobile={isMobile}
-        adminStyles={adminStyles}
-        isEdit={true}
-        title={
-          nuevoParrafoKey
-            ? "Agregar párrafo"
-            : `Editar ${nosotros.find(item => item.key === nosotrosCampoEdit)?.label || ""}`
-        }
-        categories={[]}
-      />
-
-      <DeleteModal
-        open={!!catDelete}
-        title="¿Eliminar categoría?"
-        message={catDelete ? `¿Seguro que quieres eliminar la categoría "${catDelete.nombre}"?` : ""}
-        onCancel={() => setCatDelete(null)}
-        onDelete={() => {
-          if (catDelete) handleCatDelete(catDelete.key);
-          setCatDelete(null);
-        }}
-      />
-
-      <DeleteModal
-        open={!!prodDelete}
-        title="¿Eliminar producto?"
-        message={prodDelete ? `¿Seguro que quieres eliminar el producto "${prodDelete.nombre}"?` : ""}
-        onCancel={() => setProdDelete(null)}
-        onDelete={() => {
-          if (prodDelete) handleProdDelete(prodDelete.key);
-          setProdDelete(null);
-        }}
-      />
+      {/* Categories Modals */}
+      {updateCategoryModal && category && (
+        <CreateUpdateCategoryModal 
+          open={updateCategoryModal}
+          onCancel={() => {
+            setUpdateCategoryModal(false)
+          }}
+          onSubmit={handleCategorySubmit}
+          isMobile={isMobile}
+          adminStyles={adminStyles}
+          category={category}
+          loading={getCategoryLoading}
+        />
+      )}
+      {createCategoryModal && (
+        <CreateUpdateCategoryModal 
+          open={createCategoryModal}
+          onCancel={() => {
+            setCreateCategoryModal(false)
+          }}
+          onSubmit={handleCategorySubmit}
+          isMobile={isMobile}
+          adminStyles={adminStyles}
+        />
+      )}
+      {deleteCategoryModal && (
+        <DeleteModal
+          open={deleteCategoryModal}
+          title="¿Eliminar categoría?"
+          message={deleteCategoryObject ? `¿Seguro que quieres eliminar la categoría "${deleteCategoryObject.name}"?` : ""}
+          onCancel={() => setDeleteCategoryObject(null)}
+          onDelete={() => {
+            if (deleteCategoryObject) confirmDeleteCategory(deleteCategoryObject.id);
+            setDeleteCategoryObject(null);
+          }}
+        />
+      )}
+      {/* Products Modals */}
+      {updateProductModal && product && (
+        <CreateUpdateProductModal 
+          open={updateProductModal}
+          onCancel={() => {
+            setUpdateProductModal(false)
+          }}
+          onSubmit={handleProductSubmit}
+          isMobile={isMobile}
+          adminStyles={adminStyles}
+          product={product}
+          loading={getProductLoading}
+        />
+      )}
+      {createProductModal && (
+        <CreateUpdateProductModal 
+          open={createProductModal}
+          onCancel={() => {
+            setCreateProductModal(false)
+          }}
+          onSubmit={handleProductSubmit}
+          isMobile={isMobile}
+          adminStyles={adminStyles}
+        />
+      )}
+      {deleteProductModal && (
+        <DeleteModal
+          open={deleteProductModal}
+          title="¿Eliminar producto?"
+          message={deleteProductObject ? `¿Seguro que quieres eliminar el producto "${deleteProductObject.name}"?` : ""}
+          onCancel={() => setDeleteProductObject(null)}
+          onDelete={() => {
+            if (deleteProductObject) confirmDeleteProduct(deleteProductObject.id);
+            setDeleteProductObject(null);
+          }}
+        />
+      )}
     </div>
   );
 }

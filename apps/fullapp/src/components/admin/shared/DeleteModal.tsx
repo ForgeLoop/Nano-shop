@@ -1,6 +1,18 @@
 import { Modal, Button } from "antd";
 
-export function DeleteModal({ open, title, message, onCancel, onDelete }) {
+export function DeleteModal({ 
+  open, 
+  title, 
+  message, 
+  onCancel, 
+  onDelete 
+}: {
+  open: boolean;
+  title: string;
+  message: string;
+  onCancel: () => void;
+  onDelete: () => void;
+}) {
   return (
     <Modal
       centered

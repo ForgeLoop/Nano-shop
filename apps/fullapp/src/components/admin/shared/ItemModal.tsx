@@ -47,7 +47,6 @@ export function ItemModal({
   // Solo muestra el campo de imagen si existe en fields
   //const showImageField = fields.some((f) => f.name === "imagen");
   const [form] = Form.useForm();
-  console.log(fields, "fields");
   useEffect(() => {
     if (open) {
       form.resetFields();

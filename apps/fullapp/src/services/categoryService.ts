@@ -29,7 +29,7 @@ export const categoryService = {
 
   getCategoryById: async (id: string | number): Promise<Category> => {
     const response = await apiClient.get(`/api/categories/${id}`);
-    return response.data;
+    return response.data.data.category;
   },
 
   createCategory: async (categoryData: Partial<Category>): Promise<Category> => {

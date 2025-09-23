@@ -1,4 +1,4 @@
-import type { Field } from "@/components/admin/ItemModal";
+import type { Field } from "@/components/admin/shared/ItemModal";
 
 //export type Category = { key: string; nombre: string; imagen: string };
 export type Product = { key: string; nombre: string; categoria: string; precio: number; imagen: string };
