@@ -7,6 +7,7 @@ import { COLORS, NAVBAR_HEIGHT } from '@/components/layout/navbar/navbar.constan
 export const navbarStyles: Record<string, CSSProperties> = {
     navbar: {
         backgroundColor: '#333',
+        background: 'linear-gradient(135deg, #1a1a1aff 0%, #333 100%)',
         padding: '0',
         height: '120px',
         borderBottom: 'none',
@@ -20,6 +21,7 @@ export const navbarStyles: Record<string, CSSProperties> = {
     // Mobile styles
     navbarMobile: {
         backgroundColor: '#333',
+        background: 'linear-gradient(135deg, #1a1a1aff 0%, #333 100%)',
         padding: '0',
         height: '60px',
         borderBottom: 'none',

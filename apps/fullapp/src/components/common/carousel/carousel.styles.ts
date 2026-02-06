@@ -31,5 +31,5 @@ export const carouselStyles: Record<string, CSSProperties> = {
 
 // Estilos responsive
 export const getResponsiveHeight = (isMobile: boolean): string => {
-  return isMobile ? '150px' : '500px';
+  return isMobile ? '250px' : '500px';
 };

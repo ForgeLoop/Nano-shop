@@ -1,6 +1,6 @@
 import React from "react";
-import { Modal, List, Button, Badge, Typography } from "antd";
-import { ShoppingCartOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Modal, List, Button, Typography } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;
 
@@ -45,9 +45,10 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose, cart, onRem
             centered
             title={<Text style={{ color: "#fff", fontSize: 16, fontWeight: "normal" }}>Mi Carrito</Text>}
             styles={{
-                header: { backgroundColor: "#444", borderBottom: "none", textAlign: "center"},
+                header: { backgroundColor: "transparent",   borderBottom: "none", textAlign: "center"},
                 content: {
                     backgroundColor: "#444",
+                    background: 'linear-gradient(135deg, #1a1a1aff 0%, #333 100%)',
                     borderColor: "#555",
                     borderWidth: "2px",
                     borderStyle: "solid",

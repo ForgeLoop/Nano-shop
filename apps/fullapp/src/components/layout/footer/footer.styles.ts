@@ -3,6 +3,7 @@ import { CSSProperties } from "react";
 export const footerStyles = {
     wrapper: {
         backgroundColor: "#333",
+        background: 'linear-gradient(135deg, #1a1a1aff 0%, #333 100%)',
         color: "white",
         width: "100%",
     } as CSSProperties,
