@@ -1,0 +1,93 @@
+[
+  {
+    "id": 1,
+    "nombre": "iPhone 15",
+    "categoria": "celulares",
+    "subcategoria": "iphone",
+    "precio": 1400,
+    "imagen": "/grid/iphone.jpeg"
+  },
+  {
+    "id": 2,
+    "nombre": "Samsung Galaxy",
+    "categoria": "celulares",
+    "subcategoria": "android",
+    "precio": 1100,
+    "imagen": "/grid/samsung.jpeg"
+  },
+  {
+    "id": 3,
+    "nombre": "Xiaomi Redmi",
+    "categoria": "celulares",
+    "subcategoria": "android",
+    "precio": 650,
+    "imagen": "/grid/xiaomi.jpeg"
+  },
+  {
+    "id": 4,
+    "nombre": "iPad Pro",
+    "categoria": "tablets",
+    "precio": 950,
+    "imagen": "/grid/ipad.jpeg"
+  },
+  {
+    "id": 5,
+    "nombre": "Apple Watch",
+    "categoria": "accesorios",
+    "subcategoria": "smartwatch",
+    "precio": 600,
+    "imagen": "/grid/applewatch.jpeg"
+  },
+  {
+    "id": 6,
+    "nombre": "AirPods Pro",
+    "categoria": "accesorios",
+    "subcategoria": "auriculares",
+    "precio": 320,
+    "imagen": "/grid/airpods.jpeg"
+  },
+  {
+    "id": 7,
+    "nombre": "Fundas Premium",
+    "categoria": "accesorios",
+    "subcategoria": "fundas",
+    "precio": 35,
+    "imagen": "/grid/fundas.jpeg"
+  },
+  {
+    "id": 8,
+    "nombre": "Accesorios Varios",
+    "categoria": "accesorios",
+    "precio": 50,
+    "imagen": "/grid/accesorios.jpg"
+  },
+  {
+    "id": 9,
+    "nombre": "MacBook Pro",
+    "categoria": "laptops",
+    "precio": 2200,
+    "imagen": "/grid/macbook.webp"
+  },
+  {
+    "id": 10,
+    "nombre": "JBL Speaker",
+    "categoria": "accesorios",
+    "subcategoria": "audio",
+    "precio": 180,
+    "imagen": "/grid/jbl.jpeg"
+  },
+  {
+    "id": 11,
+    "nombre": "PS5",
+    "categoria": "gaming",
+    "precio": 900,
+    "imagen": "/grid/ps5.jpeg"
+  },
+  {
+    "id": 12,
+    "nombre": "Stanley Termo",
+    "categoria": "otros",
+    "precio": 120,
+    "imagen": "/grid/stanley.jpeg"
+  }
+]
