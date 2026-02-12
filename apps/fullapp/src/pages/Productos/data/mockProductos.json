@@ -5,7 +5,9 @@
     "categoria": "celulares",
     "subcategoria": "iphone",
     "precio": 1400,
-    "imagen": "/grid/iphone.jpeg"
+    "imagen": "/grid/iphone.jpeg",
+    "color": "gris",
+    "stock": true
   },
   {
     "id": 2,
@@ -13,7 +15,9 @@
     "categoria": "celulares",
     "subcategoria": "android",
     "precio": 1100,
-    "imagen": "/grid/samsung.jpeg"
+    "imagen": "/grid/samsung.jpeg",
+    "color": "rojo",
+    "stock": true
   },
   {
     "id": 3,
@@ -21,14 +25,18 @@
     "categoria": "celulares",
     "subcategoria": "android",
     "precio": 650,
-    "imagen": "/grid/xiaomi.jpeg"
+    "imagen": "/grid/xiaomi.jpeg",
+    "color": "azul",
+    "stock": false
   },
   {
     "id": 4,
     "nombre": "iPad Pro",
     "categoria": "tablets",
     "precio": 950,
-    "imagen": "/grid/ipad.jpeg"
+    "imagen": "/grid/ipad.jpeg",
+    "color": "amarillo",
+    "stock": true
   },
   {
     "id": 5,
@@ -36,7 +44,9 @@
     "categoria": "accesorios",
     "subcategoria": "smartwatch",
     "precio": 600,
-    "imagen": "/grid/applewatch.jpeg"
+    "imagen": "/grid/applewatch.jpeg",
+    "color": "verde",
+    "stock": false
   },
   {
     "id": 6,
@@ -44,7 +54,9 @@
     "categoria": "accesorios",
     "subcategoria": "auriculares",
     "precio": 320,
-    "imagen": "/grid/airpods.jpeg"
+    "imagen": "/grid/airpods.jpeg",
+    "color": "gris",
+    "stock": true
   },
   {
     "id": 7,
@@ -52,21 +64,27 @@
     "categoria": "accesorios",
     "subcategoria": "fundas",
     "precio": 35,
-    "imagen": "/grid/fundas.jpeg"
+    "imagen": "/grid/fundas.jpeg",
+    "color": "gris",
+    "stock": true
   },
   {
     "id": 8,
     "nombre": "Accesorios Varios",
     "categoria": "accesorios",
     "precio": 50,
-    "imagen": "/grid/accesorios.jpg"
+    "imagen": "/grid/accesorios.jpg",
+    "color": "rojo",
+    "stock": true
   },
   {
     "id": 9,
     "nombre": "MacBook Pro",
     "categoria": "laptops",
     "precio": 2200,
-    "imagen": "/grid/macbook.webp"
+    "imagen": "/grid/macbook.webp",
+    "color": "azul",
+    "stock": true
   },
   {
     "id": 10,
@@ -74,20 +92,26 @@
     "categoria": "accesorios",
     "subcategoria": "audio",
     "precio": 180,
-    "imagen": "/grid/jbl.jpeg"
+    "imagen": "/grid/jbl.jpeg",
+    "color": "rojo",
+    "stock": true
   },
   {
     "id": 11,
     "nombre": "PS5",
     "categoria": "gaming",
     "precio": 900,
-    "imagen": "/grid/ps5.jpeg"
+    "imagen": "/grid/ps5.jpeg",
+    "color": "amarillo",
+    "stock": true
   },
   {
     "id": 12,
     "nombre": "Stanley Termo",
     "categoria": "otros",
     "precio": 120,
-    "imagen": "/grid/stanley.jpeg"
+    "imagen": "/grid/stanley.jpeg",
+    "color": "azul",
+    "stock": false
   }
 ]

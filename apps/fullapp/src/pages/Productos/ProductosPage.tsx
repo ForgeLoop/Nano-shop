@@ -1,107 +1,112 @@
-import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Tag, Space } from "antd";
+import { useMemo } from "react";
+import { Pagination } from "antd";
 import FilterSidebar from "./componentes/FilterSidebar";
 import ProductosGrid from "./componentes/ProductosGrid";
-import ProductosSkeleton from "./componentes/ProductosSkeleton";
+import FiltrosActivos from "./componentes/FiltrosActivos";
 import { pageStyles } from "./styles/productos.styles";
 import { Producto } from "./types/producto";
 import data from "./data/mockProductos.json";
+import { useProductosStore } from "./store/useProductosStore";
 
 const ProductosPage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const productos = data as Producto[];
 
-  const categoria = searchParams.get("categoria") || "";
-
-  const [productos, setProductos] = useState<Producto[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setLoading(true);
-
-    setTimeout(() => {
-      let result = data as Producto[];
-
-      if (categoria) {
-        result = result.filter(
-          (p) =>
-            p.categoria === categoria ||
-            p.subcategoria === categoria
-        );
-      }
-
-      setProductos(result);
-      setLoading(false);
-    }, 500);
-  }, [categoria]);
+  const { filtros, page, pageSize, setPage } =
+    useProductosStore();
 
   const categorias = useMemo(() => {
     const set = new Set<string>();
 
-    (data as Producto[]).forEach((p) => {
+    productos.forEach((p) => {
       if (p.categoria) set.add(p.categoria);
       if (p.subcategoria) set.add(p.subcategoria);
     });
 
     return Array.from(set);
-  }, []);
+  }, [productos]);
 
-  const filters = {
-    categoria
-  };
+  const productosFiltrados = useMemo(() => {
+    let result = [...productos];
 
-  const activeFilters = Object.entries(filters).filter(
-    ([_, value]) =>
-      value !== undefined &&
-      value !== null &&
-      value !== ""
-  );
+    if (filtros.categorias.length) {
+      result = result.filter(
+        (p) =>
+          filtros.categorias.includes(p.categoria) ||
+          (p.subcategoria &&
+            filtros.categorias.includes(p.subcategoria))
+      );
+    }
 
-  const handleFilterChange = (key: string) => {
-    setSearchParams({ categoria: key });
-  };
+    if (filtros.colores.length) {
+      result = result.filter((p) =>
+        filtros.colores.includes(p.color)
+      );
+    }
 
-  const handleRemoveFilter = (key: string) => {
-    const newParams = new URLSearchParams(searchParams);
+    if (filtros.soloStock) {
+      result = result.filter((p) => p.stock);
+    }
 
-    newParams.delete(key);
+    result = result.filter(
+      (p) =>
+        p.precio >= filtros.precio[0] &&
+        p.precio <= filtros.precio[1]
+    );
 
-    setSearchParams(newParams);
-  };
+    if (filtros.ordenPrecio === "asc")
+      result.sort((a, b) => a.precio - b.precio);
+
+    if (filtros.ordenPrecio === "desc")
+      result.sort((a, b) => b.precio - a.precio);
+
+    return result;
+  }, [productos, filtros]);
+
+  const productosPaginados = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return productosFiltrados.slice(start, start + pageSize);
+  }, [productosFiltrados, page, pageSize]);
 
   return (
     <div style={pageStyles.container}>
       <div style={pageStyles.filterSidebar}>
         <FilterSidebar
+          productos={productos}
           categorias={categorias}
-          selected={categoria}
-          onChange={handleFilterChange}
         />
+
         <div style={{ flex: 1 }}>
-          {activeFilters.length > 0 && (
-            <Space
-              size={[8, 8]}
-              wrap
-              style={{ marginBottom: 20 }}
-            >
-              {activeFilters.map(([key, value]) => (
-                <Tag
-                  key={key}
-                  closable
-                  onClose={() => handleRemoveFilter(key)}
-                  style={pageStyles.tags}
-                >
-                  {key}: {value}
-                </Tag>
-              ))}
-            </Space>
-          )}
-          
-          {loading ? (
-            <ProductosSkeleton />
-          ) : (
-            <ProductosGrid productos={productos} />
-          )}
+
+          <FiltrosActivos />
+
+          <div
+            style={{
+              marginBottom: 12,
+              fontWeight: 500,
+              opacity: 0.8
+            }}
+          >
+            Mostrando {productosPaginados.length} de{" "}
+            {productosFiltrados.length} productos
+          </div>
+
+          <ProductosGrid productos={productosPaginados} />
+
+          <div
+            style={{
+              marginTop: 24,
+              display: "flex",
+              justifyContent: "center"
+            }}
+          >
+            <Pagination
+              current={page}
+              pageSize={pageSize}
+              total={productosFiltrados.length}
+              onChange={setPage}
+              showSizeChanger={false}
+            />
+          </div>
         </div>
       </div>
     </div>
