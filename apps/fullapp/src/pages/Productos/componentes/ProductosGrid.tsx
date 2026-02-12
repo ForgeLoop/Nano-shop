@@ -2,6 +2,7 @@ import { Card } from "antd";
 import { motion } from "framer-motion";
 import {productosGrid} from "@/pages/Productos/styles/productos.styles"
 const ProductosGrid = ({ productos }: any) => {
+
   return (
     <motion.div
       layout
@@ -31,6 +32,9 @@ const ProductosGrid = ({ productos }: any) => {
             }
           >
             <h4>{p.nombre}</h4>
+              <span style={{ fontSize: 13, opacity: 0.7 }}>
+                {p.color.charAt(0).toUpperCase() + p.color.slice(1)}
+              </span>
             <p>${p.precio}</p>
           </Card>
         </motion.div>

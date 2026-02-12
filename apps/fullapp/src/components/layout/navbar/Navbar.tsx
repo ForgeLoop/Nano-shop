@@ -224,10 +224,12 @@ const Navbar: React.FC<NavbarProps> = () => {
 
                   {/* Navigation Buttons */}
                   <div style={navbarStyles.navigationButtons}>
-                    <DesktopDropdown
-                      onMouseEnter={handleMouseEnter}
-                      onMouseLeave={handleMouseLeave}
-                    />
+                    <Link href='/productos'>
+                      <DesktopDropdown
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                      />
+                    </Link>
                     <Link href='/nosotros'>
                       <Button
                         type="text"

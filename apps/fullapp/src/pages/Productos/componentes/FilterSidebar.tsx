@@ -1,30 +1,98 @@
-import React from "react";
+import React, { useMemo } from "react";
+import { Slider, Switch, Select } from "antd";
 import { filterSidebar } from "../styles/productos.styles";
+import { useProductosStore } from "../store/useProductosStore";
+import { Producto } from "../types/producto";
 
 interface Props {
+  productos: Producto[];
   categorias: string[];
-  selected: string;
-  onChange: (key: string) => void;
 }
 
 const FilterSidebar: React.FC<Props> = ({
-  categorias,
-  selected,
-  onChange
+  productos,
+  categorias
 }) => {
+  const {
+    filtros,
+    toggleCategoria,
+    toggleColor,
+    setPrecio,
+    setStock,
+    setOrden
+  } = useProductosStore();
+
+  const colores = useMemo(() => {
+    const set = new Set<string>();
+    productos.forEach((p) => p.color && set.add(p.color));
+    return Array.from(set);
+  }, [productos]);
+
+  const precios = useMemo(() => {
+    const valores = productos.map((p) => p.precio);
+    return [Math.min(...valores), Math.max(...valores)];
+  }, [productos]);
+
   return (
     <div style={filterSidebar.container}>
       <h3 style={filterSidebar.titulo}>Categorías</h3>
 
-      {categorias.map((cat) => (
-        <div
-          key={cat}
-          onClick={() => onChange(cat)}
-          style={filterSidebar.catTags(selected, cat)}
-        >
-          {cat}
-        </div>
-      ))}
+      {categorias.map((cat) => {
+        const selected = filtros.categorias.includes(cat);
+
+        return (
+          <div
+            key={cat}
+            onClick={() => toggleCategoria(cat)}
+            style={filterSidebar.catTags(selected)}
+          >
+            {cat}
+          </div>
+        );
+      })}
+
+      <h3 style={filterSidebar.titulo}>Colores</h3>
+
+      {colores.map((c) => {
+        const selected = filtros.colores.includes(c);
+
+        return (
+          <div
+            key={c}
+            onClick={() => toggleColor(c)}
+            style={filterSidebar.catTags(selected)}
+          >
+            {c}
+          </div>
+        );
+      })}
+
+      <h3 style={filterSidebar.titulo}>Precio</h3>
+
+      <Slider
+        range
+        min={precios[0]}
+        max={precios[1]}
+        value={filtros.precio}
+        onChange={(v) => setPrecio(v as [number, number])}
+      />
+
+      <h3 style={filterSidebar.titulo}>Solo con stock</h3>
+
+      <Switch checked={filtros.soloStock} onChange={setStock} />
+
+      <h3 style={filterSidebar.titulo}>Ordenar</h3>
+
+      <Select
+        style={{ width: "100%" }}
+        placeholder="Precio"
+        value={filtros.ordenPrecio}
+        onChange={setOrden}
+        options={[
+          { label: "Menor a mayor", value: "asc" },
+          { label: "Mayor a menor", value: "desc" }
+        ]}
+      />
     </div>
   );
 };

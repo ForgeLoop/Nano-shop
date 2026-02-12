@@ -5,7 +5,8 @@ export const pageStyles = {
         width: "100%",
         display: "flex",
         justifyContent: "center",
-        background: "#f5f5f5"
+        background: "#f5f5f5",
+        minHeight: "150vh"
     } as CSSProperties ,
     filterSidebar : {
         minHeight: "80vh",
@@ -33,16 +34,15 @@ export const filterSidebar = {
     titulo: {
         marginBottom: 12
     } as CSSProperties,
-    catTags: (selected: string, cat : string) => ({
+    catTags: (active: boolean, clickable: boolean) => ({
         textTransform: "capitalize",
         fontFamily: "system-ui, Avenir, Helvetica, Arial, sans-serif",
         padding: "8px 10px",
         borderRadius: 8,
-        cursor: "pointer",
+        cursor: clickable ? "pointer" : "default",
         marginBottom: 6,
-        background:
-            selected === cat ? "#EAEAEA" : "transparent",
-        fontWeight: selected === cat ? 600 : 400,
+        background: active ? "#EAEAEA" : "transparent",
+        fontWeight: active ? 600 : 400,
     }) as CSSProperties
 }
 
@@ -52,7 +52,11 @@ export const filtrosActivos = {
         display: "flex", 
         gap: 10, 
         flexWrap: "wrap",
-    } as CSSProperties
+    } as CSSProperties,
+    tags: {
+        textTransform: "capitalize",
+        fontWeight: 600
+    }
 }
 
 export const productosGrid = {
@@ -60,6 +64,7 @@ export const productosGrid = {
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))",
         gap: 20,
+        minHeight: "80vh"
     } as CSSProperties,
     card: {
         cover : {

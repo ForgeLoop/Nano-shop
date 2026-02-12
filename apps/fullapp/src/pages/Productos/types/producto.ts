@@ -5,4 +5,6 @@ export interface Producto {
   subcategoria?: string;
   precio: number;
   imagen: string;
+  color: string;
+  stock: boolean;
 }
