@@ -51,10 +51,7 @@ const FiltrosActivos = ({ onOpenMobile }: any) => {
             key={`color-${c}`}
             closable
             icon={<BgColorsOutlined />}
-            style={{
-              borderColor: c.toLowerCase(),
-              color: c.toLowerCase()
-            }}
+            style={filtrosActivos.tags}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
@@ -71,6 +68,7 @@ const FiltrosActivos = ({ onOpenMobile }: any) => {
           <MotionTag
             closable
             icon={<CheckCircleOutlined />}
+            style={filtrosActivos.tags}
             color="green"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -89,6 +87,7 @@ const FiltrosActivos = ({ onOpenMobile }: any) => {
             key="orden-precio"
             closable
             icon={<SwapOutlined />}
+            style={filtrosActivos.tags}
             color="blue"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -110,6 +109,7 @@ const FiltrosActivos = ({ onOpenMobile }: any) => {
             key="precio-range" 
             closable
             color="purple"
+            style={filtrosActivos.tags}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}

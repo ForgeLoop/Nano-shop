@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { Pagination } from "antd";
 import FilterSidebar from "./componentes/FilterSidebar";
 import ProductosGrid from "./componentes/ProductosGrid";
@@ -7,12 +7,65 @@ import { pageStyles } from "./styles/productos.styles";
 import { Producto } from "./types/producto";
 import data from "./data/mockProductos.json";
 import { useProductosStore } from "./store/useProductosStore";
+import { useSearchParams } from "react-router-dom";
 
 const ProductosPage = () => {
   const productos = data as Producto[];
+  const [searchParams] = useSearchParams();
 
-  const { filtros, page, pageSize, setPage } =
-    useProductosStore();
+  const {
+    filtros,
+    page,
+    pageSize,
+    setPage,
+    toggleCategoria,
+    toggleColor,
+    setStock,
+    setOrden,
+    setPrecio
+  } = useProductosStore();
+
+  // 🔥 SINCRONIZA URL -> STORE
+  useEffect(() => {
+    const categoria = searchParams.get("categoria");
+    const color = searchParams.get("color");
+    const stock = searchParams.get("stock");
+    const orden = searchParams.get("orden");
+    const precioMin = searchParams.get("min");
+    const precioMax = searchParams.get("max");
+
+    if (categoria && !filtros.categorias.includes(categoria)) {
+      toggleCategoria(categoria);
+    }
+
+    if (color && !filtros.colores.includes(color)) {
+      toggleColor(color);
+    }
+
+    if (stock === "true" && !filtros.soloStock) {
+      setStock(true);
+    }
+
+    if (orden === "asc" || orden === "desc") {
+      if (filtros.ordenPrecio !== orden) {
+        setOrden(orden);
+      }
+    }
+
+    if (precioMin && precioMax) {
+      const min = Number(precioMin);
+      const max = Number(precioMax);
+
+      if (
+        filtros.precio[0] !== min ||
+        filtros.precio[1] !== max
+      ) {
+        setPrecio([min, max]);
+      }
+    }
+  }, [searchParams]); // ❗ SOLO URL cambia
+
+
 
   const categorias = useMemo(() => {
     const set = new Set<string>();
@@ -24,6 +77,8 @@ const ProductosPage = () => {
 
     return Array.from(set);
   }, [productos]);
+
+
 
   const productosFiltrados = useMemo(() => {
     let result = [...productos];
@@ -76,7 +131,6 @@ const ProductosPage = () => {
         />
 
         <div style={{ flex: 1 }}>
-
           <FiltrosActivos />
 
           <div

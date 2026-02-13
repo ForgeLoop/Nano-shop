@@ -12,7 +12,7 @@ export interface CartItem {
     imagen: string;
 }
 
-interface CartModalProps {
+export interface CartModalProps {
     open: boolean;
     onClose: () => void;
     cart: CartItem[];
