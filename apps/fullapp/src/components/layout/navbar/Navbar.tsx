@@ -29,6 +29,7 @@ import { WhatsAppLogo } from '@/assets/icons/WhatsAppLogo';
 import { LoginModal } from '@/components/login/LoginModal';
 import { CartModal } from '@/components/cart/CartModal/CartModal';
 import { useCart } from '@/context/CartContext';
+import { useProductosStore } from "@/pages/Productos/store/useProductosStore";
 
 const { Header } = Layout;
 const { Link } = Typography;
@@ -47,6 +48,7 @@ const Navbar: React.FC<NavbarProps> = () => {
   const [cartOpen, setCartOpen] = React.useState(false);
   const isMobile = useIsMobile();
   const searchButtonRef = React.useRef<HTMLButtonElement>(null);
+  const { filtros, setNombre } = useProductosStore();
 
   // Toggle drawer
   const toggleDrawer = () => {
@@ -74,6 +76,7 @@ const Navbar: React.FC<NavbarProps> = () => {
 
   // ==================== EVENT HANDLERS ====================
   const handleMouseEnter = (element: HTMLElement, hoverStyles: Partial<CSSStyleDeclaration>) => {
+    console.log('enttre al accionar la busqueda wedis')
     Object.assign(element.style, hoverStyles);
   };
 
@@ -183,6 +186,8 @@ const Navbar: React.FC<NavbarProps> = () => {
                   <div style={navbarStyles.searchContainer}>
                     <Input
                       placeholder="Buscar productos..."
+                      value={filtros.nombre}
+                      onChange={(e) => setNombre(e.target.value)}
                       style={createSearchStyles(searchFocused)}
                       styles={{
                         input: {

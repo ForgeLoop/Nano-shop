@@ -3,6 +3,8 @@ export interface ProductCategory {
   name: string
   image: string
   description?: string
+  category?: string
+  subcategory?: string
 }
 
 export const productCategories: ProductCategory[] = [
@@ -10,71 +12,89 @@ export const productCategories: ProductCategory[] = [
     id: 1,
     name: "iPhone",
     image: "/grid/iphone.jpeg",
+    category: "celulares",
+    subcategory: "iphone",
     description: "Nuevos y usados, con garantía y variedad de modelos.",
   },
   {
     id: 2,
     name: "iPad",
+    category: "tablets",
     image: "/grid/ipad.jpeg",
     description: "Tabletas de alto rendimiento",
   },
   {
     id: 3,
-    name: "Apple Watch",
+    name: "Smartwatch",
+    category: "accesorios",
+    subcategory: "smartwatch",
     image: "/grid/applewatch.jpeg",
     description: "Relojes inteligentes de última generación",
   },
   {
     id: 4,
     name: "AirPods",
+    category: "accesorios",
+    subcategory: "auriculares",
     image: "/grid/airpods.jpeg",
     description: "Auriculares inalámbricos de alta calidad",
   },
   {
     id: 5,
     name: "MacBook",
+    category: "laptops",
     image: "/grid/macbook.webp",
     description: "Computadoras portátiles de Apple",
   },
   {
     id: 6,
     name: "Accesorios",
+    category: "accesorios",
     image: "/grid/accesorios.jpg",
     description: "Todos los accesorios para tus dipositivos.",
   },
   {
     id: 7,
     name: "JBL",
+    category: "accesorios",
+    subcategory: "audio",
     image: "/grid/jbl.jpeg",
     description: "Altavoces y auriculares JBL",
   },
   {
     id: 8,
     name: "PS5",
+    category: "gaming",
     image: "/grid/ps5.jpeg",
     description: "Consola de videojuegos PlayStation 5",
   },
   {
     id: 9,
     name: "Xiaomi",
+    category: "celulares",
+    subcategory: "android",
     image: "/grid/xiaomi.jpeg",
     description: "Productos electrónicos de Xiaomi",
   },
   {
     id: 10,
     name: "Samsung",
+    category: "celulares",
+    subcategory: "android",
     image: "/grid/samsung.jpeg",
     description: "Dispositivos y accesorios Samsung",
   },
   {
     id: 11,
     name: "Perfumes",
+    category: "permufes",
     image: "/grid/perfumes.jpeg",
     description: "Fragancias de las mejores marcas",
   },
   {
     id: 12,
     name: "Stanley",
+    category: "otros",
     image: "/grid/stanley.jpeg",
     description: "Termos y botellas Stanley",
   },

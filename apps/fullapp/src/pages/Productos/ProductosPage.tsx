@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useRef } from "react";
 import { Pagination } from "antd";
 import FilterSidebar from "./componentes/FilterSidebar";
 import ProductosGrid from "./componentes/ProductosGrid";
@@ -11,7 +11,8 @@ import { useSearchParams } from "react-router-dom";
 
 const ProductosPage = () => {
   const productos = data as Producto[];
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isFirstRender = useRef(true);
 
   const {
     filtros,
@@ -25,8 +26,10 @@ const ProductosPage = () => {
     setPrecio
   } = useProductosStore();
 
-  // 🔥 SINCRONIZA URL -> STORE
+  
   useEffect(() => {
+    if (!isFirstRender.current) return;
+    
     const categoria = searchParams.get("categoria");
     const color = searchParams.get("color");
     const stock = searchParams.get("stock");
@@ -63,9 +66,43 @@ const ProductosPage = () => {
         setPrecio([min, max]);
       }
     }
-  }, [searchParams]); // ❗ SOLO URL cambia
 
+    isFirstRender.current = false;
+  }, []);
 
+  
+  useEffect(() => {
+    if (isFirstRender.current) return;
+
+    const params = new URLSearchParams();
+
+    // Agregar categorías
+    filtros.categorias.forEach((cat) => params.append("categoria", cat));
+
+    // Agregar colores
+    filtros.colores.forEach((color) => params.append("color", color));
+
+    // Agregar stock
+    if (filtros.soloStock) {
+      params.set("stock", "true");
+    }
+
+    // Agregar orden
+    if (filtros.ordenPrecio) {
+      params.set("orden", filtros.ordenPrecio);
+    }
+
+    // Agregar rango de precio (solo si no es el default)
+    if (filtros.precio[0] !== 0) {
+      params.set("min", String(filtros.precio[0]));
+    }
+    if (filtros.precio[1] !== 999999) {
+      params.set("max", String(filtros.precio[1]));
+    }
+
+    // Actualizar URL sin agregar al historial
+    setSearchParams(params, { replace: true });
+  }, [filtros, setSearchParams]);
 
   const categorias = useMemo(() => {
     const set = new Set<string>();
@@ -78,10 +115,18 @@ const ProductosPage = () => {
     return Array.from(set);
   }, [productos]);
 
-
-
   const productosFiltrados = useMemo(() => {
     let result = [...productos];
+
+    if (filtros.nombre.trim()) {
+      const search = filtros.nombre.toLowerCase();
+
+      result = result.filter((p) =>
+        p.nombre?.toLowerCase().includes(search) ||
+        p.categoria?.toLowerCase().includes(search) ||
+        p.subcategoria?.toLowerCase().includes(search)
+      );
+    }
 
     if (filtros.categorias.length) {
       result = result.filter(
@@ -145,6 +190,13 @@ const ProductosPage = () => {
           </div>
 
           <ProductosGrid productos={productosPaginados} />
+
+          {productosFiltrados.length === 0 && (
+            <div style={{ textAlign: "center", padding: 40 }}>
+              <h3>No se encontraron productos</h3>
+              <p>Intenta ajustar los filtros</p>
+            </div>
+          )}
 
           <div
             style={{
