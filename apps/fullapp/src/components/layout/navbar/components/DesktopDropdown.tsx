@@ -31,7 +31,7 @@ export const DesktopDropdown: React.FC<DesktopDropdownProps> = ({ onMouseEnter, 
                   e.currentTarget.style.borderColor = COLORS.transparent;
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
-                onClick={() => navigateTo(`/productos/${category.name.toLowerCase()}`)}
+                onClick={() => navigateTo(`/productos?categoria=${category.subcategory ? category.subcategory : category.category }`)}
               >
                 <h3 style={desktopDropdownStyles.categoryTitle}>
                   {category.name}

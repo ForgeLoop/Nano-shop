@@ -27,7 +27,9 @@ import { MobileSearchDropdown } from '@/components/layout/navbar/MobileSearchDro
 import { FloatingWhatsApp } from '@/components/cart/WhatsAppButton/FloatingWhatsApp';
 import { WhatsAppLogo } from '@/assets/icons/WhatsAppLogo';
 import { LoginModal } from '@/components/login/LoginModal';
-import { CartItem, CartModal } from '@/components/cart/CartModal/CartModal';
+import { CartModal } from '@/components/cart/CartModal/CartModal';
+import { useCart } from '@/context/CartContext';
+import { useProductosStore } from "@/pages/Productos/store/useProductosStore";
 
 const { Header } = Layout;
 const { Link } = Typography;
@@ -37,31 +39,16 @@ const { Link } = Typography;
 const Navbar: React.FC<NavbarProps> = () => {
 
   const isAdmin = window.location.pathname.startsWith("/admin");
+  const { cart, removeFromCart, getTotalItems } = useCart();
 
   const [searchFocused, setSearchFocused] = React.useState(false);
   const [drawerVisible, setDrawerVisible] = React.useState(false);
   const [mobileSearchVisible, setMobileSearchVisible] = React.useState(false);
   const [loginOpen, setLoginOpen] = React.useState(false);
-  //const [cart, setCart] = React.useState<CartItem[]>([]);
-  const [cart, setCart] = React.useState<CartItem[]>([
-    {
-      id: "1",
-      nombre: "iPhone 14 Pro",
-      cantidad: 1,
-      precio: 1200,
-      imagen: "/grid/iphone.jpeg",
-    },
-    {
-      id: "2",
-      nombre: "AirPods Pro",
-      cantidad: 2,
-      precio: 250,
-      imagen: "/grid/airpods.jpeg",
-    },
-  ]);
   const [cartOpen, setCartOpen] = React.useState(false);
   const isMobile = useIsMobile();
   const searchButtonRef = React.useRef<HTMLButtonElement>(null);
+  const { filtros, setNombre } = useProductosStore();
 
   // Toggle drawer
   const toggleDrawer = () => {
@@ -89,14 +76,13 @@ const Navbar: React.FC<NavbarProps> = () => {
 
   // ==================== EVENT HANDLERS ====================
   const handleMouseEnter = (element: HTMLElement, hoverStyles: Partial<CSSStyleDeclaration>) => {
+    console.log('enttre al accionar la busqueda wedis')
     Object.assign(element.style, hoverStyles);
   };
 
   const handleMouseLeave = (element: HTMLElement, defaultStyles: Partial<CSSStyleDeclaration>) => {
     Object.assign(element.style, defaultStyles);
   };
-
-  const handleRemove = (id: string) => setCart(cart.filter(item => item.id !== id));
 
   // ==================== RENDER ====================
 
@@ -149,7 +135,7 @@ const Navbar: React.FC<NavbarProps> = () => {
               {/* Right Section - Cart + User */}
               <div style={navbarStyles.mobileRightSection}>
                 {isAdmin ? null : (
-                  <Badge count={cart.reduce((acc, item) => acc + item.cantidad, 0)} size="small" offset={[-2, 2]} style={{ backgroundColor: "#f5222d", boxShadow: "none", border: "none" }}>
+                  <Badge count={getTotalItems()} size="small" offset={[-2, 2]} style={{ backgroundColor: "#f5222d", boxShadow: "none", border: "none" }}>
                     <Button
                       type="text"
                       icon={<ShoppingCartOutlined />}
@@ -200,6 +186,8 @@ const Navbar: React.FC<NavbarProps> = () => {
                   <div style={navbarStyles.searchContainer}>
                     <Input
                       placeholder="Buscar productos..."
+                      value={filtros.nombre}
+                      onChange={(e) => setNombre(e.target.value)}
                       style={createSearchStyles(searchFocused)}
                       styles={{
                         input: {
@@ -273,7 +261,7 @@ const Navbar: React.FC<NavbarProps> = () => {
 
                 {/* Cart */}
                 {isAdmin ? null : (
-                  <Badge count={cart.reduce((acc, item) => acc + item.cantidad, 0)} size="small" offset={[-2, 2]} style={{ backgroundColor: "#f5222d", boxShadow: "none", border: "none" }}>
+                  <Badge count={getTotalItems()} size="small" offset={[-2, 2]} style={{ backgroundColor: "#f5222d", boxShadow: "none", border: "none" }}>
                     <Button
                       type="text"
                       icon={<ShoppingCartOutlined />}
@@ -357,7 +345,7 @@ const Navbar: React.FC<NavbarProps> = () => {
         open={cartOpen}
         onClose={() => setCartOpen(false)}
         cart={cart}
-        onRemove={handleRemove}
+        onRemove={removeFromCart}
       />
     </>
   );

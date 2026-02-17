@@ -52,11 +52,14 @@ export const filtrosActivos = {
         display: "flex", 
         gap: 10, 
         flexWrap: "wrap",
+        alignItems: "center",
+        padding: "0 20px"  
     } as CSSProperties,
     tags: {
         textTransform: "capitalize",
-        fontWeight: 600
-    }
+        fontWeight: 600,
+        margin: 0
+    },
 }
 
 export const productosGrid = {
@@ -64,19 +67,15 @@ export const productosGrid = {
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))",
         gap: 20,
-        minHeight: "80vh"
+        marginBottom: 20,
+        padding: "0 20px",
+        "@media (max-width: 768px)": {
+            gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+            gap: 15,
+            },
     } as CSSProperties,
     card: {
         cover : {
-            divContainer: {
-                overflow: "hidden"
-            } as CSSProperties,
-            img : {
-                height: 220,
-                width: "100%",
-                objectFit: "contain",
-                transition: "0.4s",
-            } as CSSProperties
         } 
     } 
 }

@@ -7,6 +7,8 @@ import Nosotros from "@/pages/Nosotros";
 import Contacto from "@/pages/Contacto";
 import Admin from "@/pages/Admin";
 import ProductosPage from "@/pages/Productos/ProductosPage";
+import { CartProvider } from '@/context/CartContext';
+
 // ...otros imports
 
 type AppProps = {
@@ -14,19 +16,21 @@ type AppProps = {
 };
 
 const App: React.FC<AppProps> = ({ theme }) => (
-   <ConfigProvider theme={theme}>
-    <Navbar />
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/nosotros" element={<Nosotros />} />
-      <Route path="/contacto" element={<Contacto />} />
-      <Route path="/productos" element={<ProductosPage />} />
-      <Route path="/admin" element={<Admin />} />
-      <Route path="/admin/:option" element={<Admin />} />
-      {/* ...más rutas */}
-    </Routes>
-    <Footer />
-  </ConfigProvider>
+     <CartProvider> 
+      <ConfigProvider theme={theme}>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/nosotros" element={<Nosotros />} />
+          <Route path="/contacto" element={<Contacto />} />
+          <Route path="/productos" element={<ProductosPage />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/:option" element={<Admin />} />
+          {/* ...más rutas */}
+        </Routes>
+        <Footer />
+      </ConfigProvider>
+    </CartProvider> 
 );
 
 export default App;

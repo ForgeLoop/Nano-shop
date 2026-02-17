@@ -17,6 +17,7 @@ export const gridStyles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    cursor: "pointer"
   }),
   cardImage: {
     width: "100%",

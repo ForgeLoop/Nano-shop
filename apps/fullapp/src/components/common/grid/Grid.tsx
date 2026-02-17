@@ -1,11 +1,20 @@
 import type React from "react"
-import { Row, Col, Card, Typography } from "antd"
+import { Row, Col, Card } from "antd"
 import { productCategories } from "@/components/common/grid/grid.constants"
 import { useIsMobile } from "@/hooks/useWindowSize"
 import { gridStyles } from "@/components/common/grid/grid.styles"
+import { useNavigate } from "react-router-dom"
 
 const ProductCategoriesGrid: React.FC = () => {
     const isMobile = useIsMobile(768);
+    const navigate = useNavigate()
+
+    const handleCategoryClick = (category: any) => {
+        // Usa category.key si existe, sino usa category.name
+        const categoryParam = category.subcategory ? category.subcategory : category.category
+        navigate(`/productos?categoria=${categoryParam}`);
+    };
+
     return (
         <div style={gridStyles.wrapper(isMobile)}>
             <div style={gridStyles.inner(isMobile)}>
@@ -23,6 +32,7 @@ const ProductCategoriesGrid: React.FC = () => {
                         >
                             <Card
                                 hoverable
+                                onClick={() => handleCategoryClick(category)}
                                 cover={
                                     <div style={gridStyles.cardCover(isMobile)}>
                                         <img

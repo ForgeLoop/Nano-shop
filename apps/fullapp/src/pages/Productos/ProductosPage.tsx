@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useEffect, useRef } from "react";
 import { Pagination } from "antd";
 import FilterSidebar from "./componentes/FilterSidebar";
 import ProductosGrid from "./componentes/ProductosGrid";
@@ -7,12 +7,102 @@ import { pageStyles } from "./styles/productos.styles";
 import { Producto } from "./types/producto";
 import data from "./data/mockProductos.json";
 import { useProductosStore } from "./store/useProductosStore";
+import { useSearchParams } from "react-router-dom";
 
 const ProductosPage = () => {
   const productos = data as Producto[];
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isFirstRender = useRef(true);
 
-  const { filtros, page, pageSize, setPage } =
-    useProductosStore();
+  const {
+    filtros,
+    page,
+    pageSize,
+    setPage,
+    toggleCategoria,
+    toggleColor,
+    setStock,
+    setOrden,
+    setPrecio
+  } = useProductosStore();
+
+  
+  useEffect(() => {
+    if (!isFirstRender.current) return;
+    
+    const categoria = searchParams.get("categoria");
+    const color = searchParams.get("color");
+    const stock = searchParams.get("stock");
+    const orden = searchParams.get("orden");
+    const precioMin = searchParams.get("min");
+    const precioMax = searchParams.get("max");
+
+    if (categoria && !filtros.categorias.includes(categoria)) {
+      toggleCategoria(categoria);
+    }
+
+    if (color && !filtros.colores.includes(color)) {
+      toggleColor(color);
+    }
+
+    if (stock === "true" && !filtros.soloStock) {
+      setStock(true);
+    }
+
+    if (orden === "asc" || orden === "desc") {
+      if (filtros.ordenPrecio !== orden) {
+        setOrden(orden);
+      }
+    }
+
+    if (precioMin && precioMax) {
+      const min = Number(precioMin);
+      const max = Number(precioMax);
+
+      if (
+        filtros.precio[0] !== min ||
+        filtros.precio[1] !== max
+      ) {
+        setPrecio([min, max]);
+      }
+    }
+
+    isFirstRender.current = false;
+  }, []);
+
+  
+  useEffect(() => {
+    if (isFirstRender.current) return;
+
+    const params = new URLSearchParams();
+
+    // Agregar categorías
+    filtros.categorias.forEach((cat) => params.append("categoria", cat));
+
+    // Agregar colores
+    filtros.colores.forEach((color) => params.append("color", color));
+
+    // Agregar stock
+    if (filtros.soloStock) {
+      params.set("stock", "true");
+    }
+
+    // Agregar orden
+    if (filtros.ordenPrecio) {
+      params.set("orden", filtros.ordenPrecio);
+    }
+
+    // Agregar rango de precio (solo si no es el default)
+    if (filtros.precio[0] !== 0) {
+      params.set("min", String(filtros.precio[0]));
+    }
+    if (filtros.precio[1] !== 999999) {
+      params.set("max", String(filtros.precio[1]));
+    }
+
+    // Actualizar URL sin agregar al historial
+    setSearchParams(params, { replace: true });
+  }, [filtros, setSearchParams]);
 
   const categorias = useMemo(() => {
     const set = new Set<string>();
@@ -27,6 +117,16 @@ const ProductosPage = () => {
 
   const productosFiltrados = useMemo(() => {
     let result = [...productos];
+
+    if (filtros.nombre.trim()) {
+      const search = filtros.nombre.toLowerCase();
+
+      result = result.filter((p) =>
+        p.nombre?.toLowerCase().includes(search) ||
+        p.categoria?.toLowerCase().includes(search) ||
+        p.subcategoria?.toLowerCase().includes(search)
+      );
+    }
 
     if (filtros.categorias.length) {
       result = result.filter(
@@ -76,7 +176,6 @@ const ProductosPage = () => {
         />
 
         <div style={{ flex: 1 }}>
-
           <FiltrosActivos />
 
           <div
@@ -91,6 +190,13 @@ const ProductosPage = () => {
           </div>
 
           <ProductosGrid productos={productosPaginados} />
+
+          {productosFiltrados.length === 0 && (
+            <div style={{ textAlign: "center", padding: 40 }}>
+              <h3>No se encontraron productos</h3>
+              <p>Intenta ajustar los filtros</p>
+            </div>
+          )}
 
           <div
             style={{

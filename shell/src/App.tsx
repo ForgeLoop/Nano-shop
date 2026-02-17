@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Layout, Menu, ConfigProvider, Switch } from 'antd';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Layout, ConfigProvider } from 'antd';
 import { Suspense } from 'react';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { lightTheme, darkTheme } from '@/theme';
+/* import { lightTheme, darkTheme } from '@/theme'; */
 import '@/App.css';
 import RemoteFullAppLoader from './components/FullApp';
 
-const { Header, Content } = Layout;
+const { Content } = Layout;
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
+/*   const [darkMode, setDarkMode] = useState(false); */
 
   return (
-    <ConfigProvider theme={darkMode ? darkTheme : lightTheme}>
+/*     <ConfigProvider theme={darkMode ? darkTheme : lightTheme}> */
+    <ConfigProvider>
       <Router>
         <Layout style={{ minHeight: '100vh' }}>
           {/* <Header

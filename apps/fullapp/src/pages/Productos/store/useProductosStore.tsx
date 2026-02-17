@@ -6,6 +6,7 @@ interface Filtros {
   precio: [number, number];
   soloStock: boolean;
   ordenPrecio?: "asc" | "desc";
+  nombre: string;
 }
 
 interface State {
@@ -18,8 +19,10 @@ interface State {
   setPrecio: (r: [number, number]) => void;
   setStock: (v: boolean) => void;
   setOrden: (o?: "asc" | "desc") => void;
+  setNombre: (n: string) => void; 
   setPage: (p: number) => void;
   clearFiltro: (k: keyof Filtros) => void;
+  clearFiltros: () => void;
 }
 
 export const useProductosStore = create<State>((set) => ({
@@ -28,11 +31,21 @@ export const useProductosStore = create<State>((set) => ({
     colores: [],
     precio: [0, 999999],
     soloStock: false,
-    ordenPrecio: undefined
+    ordenPrecio: undefined,
+    nombre: ""
   },
 
   page: 1,
   pageSize: 8,
+
+  setNombre: (nombre) =>
+    set((s) => ({
+      filtros: {
+        ...s.filtros,
+        nombre
+      },
+      page: 1
+    })),
 
   toggleCategoria: (c) =>
     set((s) => ({
@@ -85,10 +98,25 @@ export const useProductosStore = create<State>((set) => ({
             ? false
             : k === "ordenPrecio"
             ? undefined
+            : k === "nombre"
+            ? ""
             : []
       },
       page: 1
     })),
 
-  setPage: (p) => set({ page: p })
+  setPage: (p) => set({ page: p }),
+
+  clearFiltros: () =>
+    set({
+      filtros: {
+        categorias: [],
+        colores: [],
+        precio: [0, 999999],
+        soloStock: false,
+        ordenPrecio: undefined,
+        nombre: ""
+      },
+      page: 1
+    })
 }));

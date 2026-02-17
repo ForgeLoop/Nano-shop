@@ -6,13 +6,14 @@ const { Text } = Typography;
 
 export interface CartItem {
     id: string;
-    nombre: string;
+    nombre: string; 
     cantidad: number;
     precio: number;
     imagen: string;
+    descuento: number;
 }
 
-interface CartModalProps {
+export interface CartModalProps {
     open: boolean;
     onClose: () => void;
     cart: CartItem[];
