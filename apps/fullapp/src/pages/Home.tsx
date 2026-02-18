@@ -9,9 +9,7 @@ const Home = () => {
   const { clearFiltros } = useProductosStore();
   
   useEffect(() => {
-    return () => {
-      clearFiltros(); 
-    };
+    clearFiltros();
   }, [clearFiltros]);
 
   return (

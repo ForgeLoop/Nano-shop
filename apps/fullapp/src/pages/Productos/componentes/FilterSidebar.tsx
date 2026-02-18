@@ -19,6 +19,7 @@ const FilterSidebar: React.FC<Props> = ({
     toggleColor,
     setPrecio,
     setStock,
+    setDescuento,
     setOrden
   } = useProductosStore();
 
@@ -44,7 +45,7 @@ const FilterSidebar: React.FC<Props> = ({
           <div
             key={cat}
             onClick={() => toggleCategoria(cat)}
-            style={filterSidebar.catTags(selected)}
+            style={filterSidebar.catTags(selected, true)}
           >
             {cat}
           </div>
@@ -60,7 +61,7 @@ const FilterSidebar: React.FC<Props> = ({
           <div
             key={c}
             onClick={() => toggleColor(c)}
-            style={filterSidebar.catTags(selected)}
+            style={filterSidebar.catTags(selected, true)}
           >
             {c}
           </div>
@@ -77,10 +78,18 @@ const FilterSidebar: React.FC<Props> = ({
         onChange={(v) => setPrecio(v as [number, number])}
       />
 
-      <h3 style={filterSidebar.titulo}>Solo con stock</h3>
 
-      <Switch checked={filtros.soloStock} onChange={setStock} />
+      <h3 style={filterSidebar.titulo}>En oferta</h3>
 
+      <Slider
+        range
+        min={0}
+        max={100}
+        value={filtros.descuento}
+        onChange={(v) => setDescuento(v as [number, number])}
+      />
+
+      
       <h3 style={filterSidebar.titulo}>Ordenar</h3>
 
       <Select
@@ -93,6 +102,10 @@ const FilterSidebar: React.FC<Props> = ({
           { label: "Mayor a menor", value: "desc" }
         ]}
       />
+      
+        <h3 style={filterSidebar.titulo}>Con stock</h3>
+  
+        <Switch checked={filtros.soloStock} onChange={setStock} />
     </div>
   );
 };

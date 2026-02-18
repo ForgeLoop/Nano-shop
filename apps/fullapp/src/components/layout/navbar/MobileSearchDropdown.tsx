@@ -7,10 +7,18 @@ interface MobileSearchDropdownProps {
     visible: boolean;
     onClose: () => void;
     searchButtonRef?: React.RefObject<HTMLButtonElement | null>;
+    initialValue?: string;
+    onSearchSubmit: (value: string) => void;
 }
 
-export const MobileSearchDropdown: React.FC<MobileSearchDropdownProps> = ({ visible, onClose, searchButtonRef }) => {
-    const [searchValue, setSearchValue] = React.useState('');
+export const MobileSearchDropdown: React.FC<MobileSearchDropdownProps> = ({
+    visible,
+    onClose,
+    searchButtonRef,
+    initialValue,
+    onSearchSubmit
+}) => {
+    const [searchValue, setSearchValue] = React.useState(initialValue ?? '');
     const dropdownRef = React.useRef<HTMLDivElement>(null);
 
     // Effect to handle click outside
@@ -36,14 +44,21 @@ export const MobileSearchDropdown: React.FC<MobileSearchDropdownProps> = ({ visi
         };
     }, [visible, onClose]);
 
+    React.useEffect(() => {
+        if (visible) {
+            setSearchValue(initialValue ?? '');
+        }
+    }, [visible, initialValue]);
+
     if (!visible) return null;
 
     const handleSearch = () => {
-        if (searchValue.trim()) {
-            console.log('Searching for:', searchValue);
-            // Aquí puedes agregar la lógica de búsqueda
-            onClose();
-        }
+        const value = searchValue.trim();
+
+        if (!value) return;
+
+        onSearchSubmit(value);
+        onClose();
     };
 
     const handleKeyPress = (e: React.KeyboardEvent) => {

@@ -4,6 +4,7 @@ export interface Producto {
   categoria: string;
   subcategoria?: string;
   precio: number;
+  descuento?: number;
   imagen: string;
   color: string;
   stock: boolean;

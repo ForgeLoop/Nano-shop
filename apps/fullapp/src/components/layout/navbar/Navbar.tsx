@@ -30,6 +30,7 @@ import { LoginModal } from '@/components/login/LoginModal';
 import { CartModal } from '@/components/cart/CartModal/CartModal';
 import { useCart } from '@/context/CartContext';
 import { useProductosStore } from "@/pages/Productos/store/useProductosStore";
+import { useNavigate } from 'react-router-dom';
 
 const { Header } = Layout;
 const { Link } = Typography;
@@ -49,6 +50,7 @@ const Navbar: React.FC<NavbarProps> = () => {
   const isMobile = useIsMobile();
   const searchButtonRef = React.useRef<HTMLButtonElement>(null);
   const { filtros, setNombre } = useProductosStore();
+  const navigate = useNavigate();
 
   // Toggle drawer
   const toggleDrawer = () => {
@@ -72,6 +74,20 @@ const Navbar: React.FC<NavbarProps> = () => {
 
   const closeMobileSearch = () => {
     setMobileSearchVisible(false);
+  };
+
+  const handleSubmitSearch = (value?: string) => {
+    const searchTerm = (value ?? filtros.nombre).trim();
+
+    setNombre(searchTerm);
+
+    const params = new URLSearchParams();
+    if (searchTerm) {
+      params.set("nombre", searchTerm);
+    }
+
+    const query = params.toString();
+    navigate(query ? `/productos?${query}` : "/productos");
   };
 
   // ==================== EVENT HANDLERS ====================
@@ -188,6 +204,7 @@ const Navbar: React.FC<NavbarProps> = () => {
                       placeholder="Buscar productos..."
                       value={filtros.nombre}
                       onChange={(e) => setNombre(e.target.value)}
+                      onPressEnter={() => handleSubmitSearch()}
                       style={createSearchStyles(searchFocused)}
                       styles={{
                         input: {
@@ -201,6 +218,7 @@ const Navbar: React.FC<NavbarProps> = () => {
                           type="text"
                           icon={<SearchOutlined />}
                           style={searchSuffixButton}
+                          onClick={() => handleSubmitSearch()}
                           onMouseEnter={(e) => handleMouseEnter(e.currentTarget, { color: COLORS.white })}
                           onMouseLeave={(e) => handleMouseLeave(e.currentTarget, { color: COLORS.overlay.dark })}
                         />
@@ -326,6 +344,8 @@ const Navbar: React.FC<NavbarProps> = () => {
         visible={mobileSearchVisible}
         onClose={closeMobileSearch}
         searchButtonRef={searchButtonRef}
+        initialValue={filtros.nombre}
+        onSearchSubmit={handleSubmitSearch}
       />
 
       {/* ==================== MOBILE DRAWER ==================== */}

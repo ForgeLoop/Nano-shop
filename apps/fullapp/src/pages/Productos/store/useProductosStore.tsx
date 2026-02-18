@@ -5,6 +5,7 @@ interface Filtros {
   colores: string[];
   precio: [number, number];
   soloStock: boolean;
+  descuento: [number, number];
   ordenPrecio?: "asc" | "desc";
   nombre: string;
 }
@@ -18,6 +19,7 @@ interface State {
   toggleColor: (c: string) => void;
   setPrecio: (r: [number, number]) => void;
   setStock: (v: boolean) => void;
+  setDescuento: (r: [number, number]) => void;
   setOrden: (o?: "asc" | "desc") => void;
   setNombre: (n: string) => void; 
   setPage: (p: number) => void;
@@ -31,6 +33,7 @@ export const useProductosStore = create<State>((set) => ({
     colores: [],
     precio: [0, 999999],
     soloStock: false,
+    descuento: [0, 100],
     ordenPrecio: undefined,
     nombre: ""
   },
@@ -81,6 +84,12 @@ export const useProductosStore = create<State>((set) => ({
       page: 1
     })),
 
+  setDescuento: (r) =>
+    set((s) => ({
+      filtros: { ...s.filtros, descuento: r },
+      page: 1
+    })),
+
   setOrden: (o) =>
     set((s) => ({
       filtros: { ...s.filtros, ordenPrecio: o },
@@ -96,6 +105,8 @@ export const useProductosStore = create<State>((set) => ({
             ? [0, 999999]
             : k === "soloStock"
             ? false
+            : k === "descuento"
+            ? [0, 100]
             : k === "ordenPrecio"
             ? undefined
             : k === "nombre"
@@ -114,6 +125,7 @@ export const useProductosStore = create<State>((set) => ({
         colores: [],
         precio: [0, 999999],
         soloStock: false,
+        descuento: [0, 100],
         ordenPrecio: undefined,
         nombre: ""
       },

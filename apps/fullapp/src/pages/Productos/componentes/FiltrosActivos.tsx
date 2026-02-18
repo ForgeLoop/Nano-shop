@@ -3,7 +3,8 @@ import {
   FilterOutlined,
   BgColorsOutlined,
   CheckCircleOutlined,
-  SwapOutlined
+  SwapOutlined,
+  PercentageOutlined
 } from "@ant-design/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { useProductosStore } from "../store/useProductosStore";
@@ -17,6 +18,7 @@ const FiltrosActivos = ({ onOpenMobile }: any) => {
     toggleCategoria,
     toggleColor,
     setStock,
+    setDescuento,
     setOrden,
     setPrecio
   } = useProductosStore();
@@ -31,7 +33,7 @@ const FiltrosActivos = ({ onOpenMobile }: any) => {
 
         {filtros.categorias.map((cat) => (
           <MotionTag
-            style={filtrosActivos.tags}
+            style={filtrosActivos.tags as any}
             key={`cat-${cat}`}
             closable
             initial={{ opacity: 0, scale: 0.8 }}
@@ -51,7 +53,7 @@ const FiltrosActivos = ({ onOpenMobile }: any) => {
             key={`color-${c}`}
             closable
             icon={<BgColorsOutlined />}
-            style={filtrosActivos.tags}
+            style={filtrosActivos.tags as any}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
@@ -68,7 +70,7 @@ const FiltrosActivos = ({ onOpenMobile }: any) => {
           <MotionTag
             closable
             icon={<CheckCircleOutlined />}
-            style={filtrosActivos.tags}
+            style={filtrosActivos.tags as any}
             color="green"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -82,12 +84,31 @@ const FiltrosActivos = ({ onOpenMobile }: any) => {
           </MotionTag>
         )}
 
+        {(filtros.descuento[0] !== 0 ||
+          filtros.descuento[1] !== 100) && (
+          <MotionTag
+            closable
+            icon={<PercentageOutlined />}
+            style={filtrosActivos.tags as any}
+            color="gold"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            onClose={(e) => {
+              e.preventDefault();
+              setDescuento([0, 100]);
+            }}
+          >
+            {filtros.descuento[0]}% - {filtros.descuento[1]}%
+          </MotionTag>
+        )}
+
         {filtros.ordenPrecio && (
           <MotionTag
             key="orden-precio"
             closable
             icon={<SwapOutlined />}
-            style={filtrosActivos.tags}
+            style={filtrosActivos.tags as any}
             color="blue"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -109,7 +130,7 @@ const FiltrosActivos = ({ onOpenMobile }: any) => {
             key="precio-range" 
             closable
             color="purple"
-            style={filtrosActivos.tags}
+            style={filtrosActivos.tags as any}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}

@@ -2,6 +2,7 @@ import { useMemo, useEffect, useRef } from "react";
 import { Pagination } from "antd";
 import FilterSidebar from "./componentes/FilterSidebar";
 import ProductosGrid from "./componentes/ProductosGrid";
+import type { Product } from "./componentes/ProductosGrid";
 import FiltrosActivos from "./componentes/FiltrosActivos";
 import { pageStyles } from "./styles/productos.styles";
 import { Producto } from "./types/producto";
@@ -21,7 +22,9 @@ const ProductosPage = () => {
     setPage,
     toggleCategoria,
     toggleColor,
+    setNombre,
     setStock,
+    setDescuento,
     setOrden,
     setPrecio
   } = useProductosStore();
@@ -32,7 +35,11 @@ const ProductosPage = () => {
     
     const categoria = searchParams.get("categoria");
     const color = searchParams.get("color");
+    const nombre = searchParams.get("nombre");
     const stock = searchParams.get("stock");
+    const descuento = searchParams.get("descuento");
+    const descuentoMin = searchParams.get("dmin");
+    const descuentoMax = searchParams.get("dmax");
     const orden = searchParams.get("orden");
     const precioMin = searchParams.get("min");
     const precioMax = searchParams.get("max");
@@ -45,8 +52,26 @@ const ProductosPage = () => {
       toggleColor(color);
     }
 
+    if (nombre !== null && filtros.nombre !== nombre) {
+      setNombre(nombre);
+    }
+
     if (stock === "true" && !filtros.soloStock) {
       setStock(true);
+    }
+
+    if (descuentoMin && descuentoMax) {
+      const min = Number(descuentoMin);
+      const max = Number(descuentoMax);
+
+      if (
+        filtros.descuento[0] !== min ||
+        filtros.descuento[1] !== max
+      ) {
+        setDescuento([min, max]);
+      }
+    } else if (descuento === "true") {
+      setDescuento([1, 100]);
     }
 
     if (orden === "asc" || orden === "desc") {
@@ -82,9 +107,20 @@ const ProductosPage = () => {
     // Agregar colores
     filtros.colores.forEach((color) => params.append("color", color));
 
+    if (filtros.nombre.trim()) {
+      params.set("nombre", filtros.nombre.trim());
+    }
+
     // Agregar stock
     if (filtros.soloStock) {
       params.set("stock", "true");
+    }
+
+    if (filtros.descuento[0] !== 0) {
+      params.set("dmin", String(filtros.descuento[0]));
+    }
+    if (filtros.descuento[1] !== 100) {
+      params.set("dmax", String(filtros.descuento[1]));
     }
 
     // Agregar orden
@@ -153,6 +189,12 @@ const ProductosPage = () => {
         p.precio <= filtros.precio[1]
     );
 
+    result = result.filter(
+      (p) =>
+        (p.descuento ?? 0) >= filtros.descuento[0] &&
+        (p.descuento ?? 0) <= filtros.descuento[1]
+    );
+
     if (filtros.ordenPrecio === "asc")
       result.sort((a, b) => a.precio - b.precio);
 
@@ -166,6 +208,18 @@ const ProductosPage = () => {
     const start = (page - 1) * pageSize;
     return productosFiltrados.slice(start, start + pageSize);
   }, [productosFiltrados, page, pageSize]);
+
+  const productosGridData = useMemo<Product[]>(
+    () =>
+      productosPaginados.map((p) => ({
+        id: String(p.id),
+        nombre: p.nombre,
+        precio: p.precio,
+        imagen: p.imagen,
+        descuento: p.descuento ?? 0
+      })),
+    [productosPaginados]
+  );
 
   return (
     <div style={pageStyles.container}>
@@ -189,7 +243,7 @@ const ProductosPage = () => {
             {productosFiltrados.length} productos
           </div>
 
-          <ProductosGrid productos={productosPaginados} />
+          <ProductosGrid productos={productosGridData} />
 
           {productosFiltrados.length === 0 && (
             <div style={{ textAlign: "center", padding: 40 }}>
