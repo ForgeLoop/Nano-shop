@@ -1,11 +1,10 @@
-import { Card, Button, Badge, Modal, message, Tag } from "antd";
+import { Card, Button, Badge, Modal, message } from "antd";
 import { ShoppingCartOutlined, CheckOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import { productosGrid } from "@/pages/Productos/styles/productos.styles";
 import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
 import { ProductModalContent } from "./ProductoModal";
-import { DollarOutlined } from "@ant-design/icons";
 export interface Product {
   id: string;
   nombre: string;

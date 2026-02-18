@@ -173,7 +173,7 @@ const handleDescuento = (product: Product) => {
           />
         </div>
         <AnimatePresence>
-          {cartQuantity > 0 && (
+          {(cartQuantity ?? 0) > 0 && (
             <motion.div
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}

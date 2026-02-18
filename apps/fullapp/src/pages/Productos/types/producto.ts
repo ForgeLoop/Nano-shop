@@ -7,4 +7,5 @@ export interface Producto {
   imagen: string;
   color: string;
   stock: boolean;
+  descuento: number;
 }

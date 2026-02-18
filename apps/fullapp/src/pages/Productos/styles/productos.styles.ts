@@ -59,7 +59,7 @@ export const filtrosActivos = {
         textTransform: "capitalize",
         fontWeight: 600,
         margin: 0
-    },
+    } as CSSProperties,
 }
 
 export const productosGrid = {

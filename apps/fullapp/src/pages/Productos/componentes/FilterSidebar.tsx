@@ -44,7 +44,7 @@ const FilterSidebar: React.FC<Props> = ({
           <div
             key={cat}
             onClick={() => toggleCategoria(cat)}
-            style={filterSidebar.catTags(selected)}
+            style={filterSidebar.catTags(selected, true)}
           >
             {cat}
           </div>
@@ -60,7 +60,7 @@ const FilterSidebar: React.FC<Props> = ({
           <div
             key={c}
             onClick={() => toggleColor(c)}
-            style={filterSidebar.catTags(selected)}
+            style={filterSidebar.catTags(selected, true)}
           >
             {c}
           </div>
