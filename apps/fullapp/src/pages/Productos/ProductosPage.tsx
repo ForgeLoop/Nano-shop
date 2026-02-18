@@ -164,7 +164,10 @@ const ProductosPage = () => {
 
   const productosPaginados = useMemo(() => {
     const start = (page - 1) * pageSize;
-    return productosFiltrados.slice(start, start + pageSize);
+    return productosFiltrados.slice(start, start + pageSize).map((p) => ({
+      ...p,
+      id: String(p.id)
+    }));
   }, [productosFiltrados, page, pageSize]);
 
   return (
