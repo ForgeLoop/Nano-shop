@@ -14,11 +14,16 @@ const ProductosPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const isFirstRender = useRef(true);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const {
     filtros,
     page,
     pageSize,
     setPage,
+    setNombre,
     toggleCategoria,
     toggleColor,
     setStock,
@@ -36,6 +41,11 @@ const ProductosPage = () => {
     const orden = searchParams.get("orden");
     const precioMin = searchParams.get("min");
     const precioMax = searchParams.get("max");
+
+    const nombre = searchParams.get("nombre");
+    if (nombre && nombre.trim()) {
+      setNombre(nombre.trim());
+    }
 
     if (categoria && !filtros.categorias.includes(categoria)) {
       toggleCategoria(categoria);
@@ -75,6 +85,11 @@ const ProductosPage = () => {
     if (isFirstRender.current) return;
 
     const params = new URLSearchParams();
+
+    // Agregar nombre de búsqueda
+    if (filtros.nombre.trim()) {
+      params.set("nombre", filtros.nombre.trim());
+    }
 
     // Agregar categorías
     filtros.categorias.forEach((cat) => params.append("categoria", cat));

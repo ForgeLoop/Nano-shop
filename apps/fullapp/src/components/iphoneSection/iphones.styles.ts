@@ -95,4 +95,8 @@ export const iphoneStyles = {
       gap: 8, 
       alignItems: "center",
     } as CSSProperties,
+
+    divWithoutDiscount: {
+      height: 24, 
+    } as CSSProperties,
 }

@@ -28,8 +28,9 @@ import { FloatingWhatsApp } from '@/components/cart/WhatsAppButton/FloatingWhats
 import { WhatsAppLogo } from '@/assets/icons/WhatsAppLogo';
 import { LoginModal } from '@/components/login/LoginModal';
 import { CartModal } from '@/components/cart/CartModal/CartModal';
-import { useCart } from '@/context/CartContext';
+import { useCartStore  } from '@/components/cart/store/useCartStore';
 import { useProductosStore } from "@/pages/Productos/store/useProductosStore";
+import { useNavigate } from 'react-router-dom';
 
 const { Header } = Layout;
 const { Link } = Typography;
@@ -37,9 +38,10 @@ const { Link } = Typography;
 // ==================== COMPONENT ====================
 
 const Navbar: React.FC<NavbarProps> = () => {
+  const navigate = useNavigate();
 
   const isAdmin = window.location.pathname.startsWith("/admin");
-  const { cart, removeFromCart, getTotalItems } = useCart();
+  const { cart, removeFromCart, getTotalItems } = useCartStore ();
 
   const [searchFocused, setSearchFocused] = React.useState(false);
   const [drawerVisible, setDrawerVisible] = React.useState(false);
@@ -189,6 +191,11 @@ const Navbar: React.FC<NavbarProps> = () => {
                       value={filtros.nombre}
                       onChange={(e) => setNombre(e.target.value)}
                       style={createSearchStyles(searchFocused)}
+                      onPressEnter={() => {
+                        const nombre = filtros.nombre.trim();
+                        navigate(nombre ? `/productos?nombre=${encodeURIComponent(nombre)}` : '/productos');
+                      }}
+
                       styles={{
                         input: {
                           backgroundColor: 'transparent !important',
@@ -201,6 +208,10 @@ const Navbar: React.FC<NavbarProps> = () => {
                           type="text"
                           icon={<SearchOutlined />}
                           style={searchSuffixButton}
+                          onClick={() => {
+                            const nombre = filtros.nombre.trim();
+                            navigate(nombre ? `/productos?nombre=${encodeURIComponent(nombre)}` : '/productos');
+                          }}
                           onMouseEnter={(e) => handleMouseEnter(e.currentTarget, { color: COLORS.white })}
                           onMouseLeave={(e) => handleMouseLeave(e.currentTarget, { color: COLORS.overlay.dark })}
                         />
@@ -344,8 +355,6 @@ const Navbar: React.FC<NavbarProps> = () => {
       <CartModal
         open={cartOpen}
         onClose={() => setCartOpen(false)}
-        cart={cart}
-        onRemove={removeFromCart}
       />
     </>
   );

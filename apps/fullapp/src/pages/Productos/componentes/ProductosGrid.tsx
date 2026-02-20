@@ -1,8 +1,8 @@
-import { Card, Button, Badge, Modal, message } from "antd";
+import { Card, Button, Modal, message } from "antd";
 import { ShoppingCartOutlined, CheckOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import { productosGrid } from "@/pages/Productos/styles/productos.styles";
-import { useCart } from "@/context/CartContext";
+import { useCartStore } from "@/components/cart/store/useCartStore";
 import { useState, useEffect } from "react";
 import { ProductModalContent } from "./ProductoModal";
 export interface Product {
@@ -18,7 +18,7 @@ interface Props {
 }
 
 const ProductosGrid: React.FC<Props> = ({ productos }) => {
-  const { addToCart, cart } = useCart();
+  const { addToCart, cart } = useCartStore();
   const [addedItems, setAddedItems] = useState<Set<string>>(new Set());
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -124,7 +124,6 @@ const ProductosGrid: React.FC<Props> = ({ productos }) => {
   return (
     <motion.div layout style={productosGrid.motionContainer}>
       {productos.map((p) => {
-        const quantityInCart = getProductQuantityInCart(p.id);
         const isJustAdded = addedItems.has(p.id);
 
         return (
@@ -134,14 +133,7 @@ const ProductosGrid: React.FC<Props> = ({ productos }) => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <Badge
-              count={quantityInCart}
-              offset={[-10, 10]}
-              style={{
-                backgroundColor: "#52c41a",
-                display: quantityInCart > 0 ? "block" : "none",
-              }}
-            >
+
               <Card
                 hoverable
                 bordered={false}
@@ -182,7 +174,7 @@ const ProductosGrid: React.FC<Props> = ({ productos }) => {
                   }
                 actions={[ 
                   <Button 
-                    type={isJustAdded ? "default" : "primary"} 
+                    type="default"
                     icon={ isJustAdded ? <CheckOutlined /> : <ShoppingCartOutlined /> } 
                     onClick={(e) => {
                       e.stopPropagation();
@@ -190,8 +182,8 @@ const ProductosGrid: React.FC<Props> = ({ productos }) => {
                     }
                     style={{ 
                       width: "90%", 
-                      backgroundColor: isJustAdded ? "#52c41a" : "#1890ff", 
-                      borderColor: isJustAdded ? "#52c41a" : "#1890ff", 
+                      background: isJustAdded ? "linear-gradient(135deg, #14332a, #1f4d3d)" : "linear-gradient(135deg, #1f2a44, #2e3a59)", 
+                      border: "none",
                       color: "#fff", transition: "all 0.3s ease", }} 
                     > 
                     {isJustAdded ? "¡Agregado!" : "Agregar al carrito"} 
@@ -231,7 +223,6 @@ const ProductosGrid: React.FC<Props> = ({ productos }) => {
                   )
                 }
               </Card>
-            </Badge>
           </motion.div>
         );
       })}

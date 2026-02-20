@@ -26,7 +26,8 @@ const IphoneSection = ({ productos }: Props) => {
     priceContainerStyle,
     priceStyle,
     oldPriceStyle,
-    containerPriceWithDiscount
+    containerPriceWithDiscount,
+    divWithoutDiscount
   } = iphoneStyles;
 
   // 🔥 Solo iphones
@@ -153,6 +154,16 @@ const IphoneSection = ({ productos }: Props) => {
                   <div style={priceContainerStyle}>
                     {producto.descuento ? (
                       <>
+                        <Text
+                            delete
+                            style={{
+                              ...oldPriceStyle,
+                              marginRight: 8,
+                            }}
+                        >
+                            USD {producto.precio.toLocaleString()}
+                        </Text>
+
                         <div style={containerPriceWithDiscount}>
                             <Title level={4} style={priceStyle}>
                             USD {precioFinal.toLocaleString()}
@@ -168,22 +179,17 @@ const IphoneSection = ({ productos }: Props) => {
                                 {producto.descuento}% OFF
                             </span>
                         </div>
-
-                        <Text
-                            delete
-                            style={{
-                            ...oldPriceStyle,
-                            marginRight: 8,
-                            }}
-                        >
-                            USD {producto.precio.toLocaleString()}
-                        </Text>
-
                       </>
                     ) : (
-                      <Title level={4} style={priceStyle}>
-                        USD {producto.precio.toLocaleString()}
-                      </Title>
+                      <>
+                        <div
+                          style={divWithoutDiscount}
+                        >
+                        </div>
+                        <Title level={4} style={priceStyle}>
+                          USD {producto.precio.toLocaleString()}
+                        </Title>
+                      </>
                     )}
                   </div>
                 </Card>
