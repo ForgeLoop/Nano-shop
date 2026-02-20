@@ -2,6 +2,8 @@ import React from 'react';
 import { Input, Button } from 'antd';
 import { mobileSearchDropdownStyles } from '@/components/layout/navbar/navbar.styles';
 import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
+import { useProductosStore } from '@/pages/Productos/store/useProductosStore';
+import { useNavigate } from 'react-router-dom';
 
 interface MobileSearchDropdownProps {
     visible: boolean;
@@ -10,7 +12,8 @@ interface MobileSearchDropdownProps {
 }
 
 export const MobileSearchDropdown: React.FC<MobileSearchDropdownProps> = ({ visible, onClose, searchButtonRef }) => {
-    const [searchValue, setSearchValue] = React.useState('');
+    const navigate = useNavigate();
+    const { filtros, setNombre } = useProductosStore();
     const dropdownRef = React.useRef<HTMLDivElement>(null);
 
     // Effect to handle click outside
@@ -39,9 +42,9 @@ export const MobileSearchDropdown: React.FC<MobileSearchDropdownProps> = ({ visi
     if (!visible) return null;
 
     const handleSearch = () => {
-        if (searchValue.trim()) {
-            console.log('Searching for:', searchValue);
-            // Aquí puedes agregar la lógica de búsqueda
+        const nombre = filtros.nombre.trim();
+        if (nombre) {
+            navigate(`/productos?nombre=${encodeURIComponent(nombre)}`);
             onClose();
         }
     };
@@ -59,8 +62,8 @@ export const MobileSearchDropdown: React.FC<MobileSearchDropdownProps> = ({ visi
             {/* Input de búsqueda */}
             <Input
                 placeholder="¿Qué estás buscando?"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
+                value={filtros.nombre}
+                onChange={(e) => setNombre(e.target.value)}
                 onKeyDown={handleKeyPress}
                 autoFocus
                 style={mobileSearchDropdownStyles.input}

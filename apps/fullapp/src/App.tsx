@@ -7,7 +7,6 @@ import Nosotros from "@/pages/Nosotros";
 import Contacto from "@/pages/Contacto";
 import Admin from "@/pages/Admin";
 import ProductosPage from "@/pages/Productos/ProductosPage";
-import { CartProvider } from '@/context/CartContext';
 
 // ...otros imports
 
@@ -16,7 +15,6 @@ type AppProps = {
 };
 
 const App: React.FC<AppProps> = ({ theme }) => (
-     <CartProvider> 
       <ConfigProvider theme={theme}>
         <Navbar />
         <Routes>
@@ -30,7 +28,6 @@ const App: React.FC<AppProps> = ({ theme }) => (
         </Routes>
         <Footer />
       </ConfigProvider>
-    </CartProvider> 
 );
 
 export default App;
